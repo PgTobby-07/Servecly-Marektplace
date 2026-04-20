@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const MainLayout = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <div className="min-h-screen flex flex-col bg-surface font-sans selection:bg-primary-fixed selection:text-on-primary-fixed">
       {/* Header with Frosted Glass Effect */}
@@ -21,13 +22,14 @@ const MainLayout = ({ children }) => {
             <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
             <Link to="/post-task" className="hover:text-primary transition-colors">Post a Task</Link>
           </div>
-
+          {user ? null : (
           <div className="flex items-center gap-4">
             <Link to="/login" className="text-sm font-medium text-on-surface-variant hover:text-primary">Sign In</Link>
             <Link to="/signup" className="btn-primary text-sm font-semibold shadow-sm">
               Sign Up
             </Link>
           </div>
+          )}
         </nav>
       </header>
 

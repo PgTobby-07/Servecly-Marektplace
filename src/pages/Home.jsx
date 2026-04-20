@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const categories = [
     { id: 1, name: 'Assembly', icon: '🛠️', count: '1.2k+ Taskers' },
     { id: 2, name: 'Mounting', icon: '🖼️', count: '800+ Taskers' },
@@ -19,12 +20,18 @@ const Home = () => {
       <section className="bg-surface-container-low py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-3xl">
+            {user && (                     //NEW CHANGE
+             <p className="text-lg text-primary font-semibold mb-4">
+                  Welcome back, {user?.name || "User"}
+                 </p>
+              )}
+              
             <h1 className="text-5xl md:text-7xl text-on-surface mb-6 leading-tight">
               Expert help, <br />
               <span className="text-primary-container font-extrabold">curated precision.</span>
             </h1>
             <p className="text-on-surface-variant text-xl mb-10 leading-relaxed">
-              Connect with vetted professionals for home repairs, moving, assembly, and more. 
+              Connect {user?.name || "today"}with vetted professionals for home repairs, moving, assembly, and more. 
               The architectural standard for service marketplaces.
             </p>
             

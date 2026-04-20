@@ -1,7 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 const SignUp = () => {
+  const [formData, setFormData] = useState({
+  fullname: '',
+  email: '',
+  password: '',
+  isTasker: false
+});
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData({
+     ...formData,
+      [name]: type === 'checkbox' ? checked : value
+    });
+};
+   const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+   const payload = {
+    name: formData.fullname,
+    email: formData.email,
+    password: formData.password,
+    role: formData.isTasker ? "admin" : "users"
+  };
+
+  const response = await axios.post("http://127.0.0.1:8000/v1/auth/signup", payload);
+  //localStorage.setItem("user", JSON.stringify(response.data));
+  localStorage.setItem("user", JSON.stringify({ 
+  ...response.data, 
+  name: formData.fullname 
+}));
+  navigate("/home"); 
+};
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-container-low px-6 py-12">
       <div className="w-full max-w-md card-tonal bg-white p-10 flex flex-col gap-8">
@@ -16,13 +51,15 @@ const SignUp = () => {
           <p className="text-on-surface-variant text-sm">Join the marketplace of curated precision</p>
         </div>
 
-        <form className="flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+        <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2">
             <label htmlFor="fullname" className="text-sm font-bold text-on-surface-variant">Full Name</label>
             <input 
               id="fullname"
               name="fullname"
               type="text" 
+              value={formData.fullname}
+              onChange={handleChange}
               autoComplete="name"
               placeholder="Enter your full name" 
               className="w-full bg-surface-container-highest px-4 py-3 rounded-xl text-on-surface focus:ring-2 focus:ring-primary/20 transition-all outline-none"
@@ -35,6 +72,8 @@ const SignUp = () => {
               id="email"
               name="email"
               type="email" 
+              value={formData.email}
+              onChange={handleChange}
               autoComplete="email"
               placeholder="Enter your email" 
               className="w-full bg-surface-container-highest px-4 py-3 rounded-xl text-on-surface focus:ring-2 focus:ring-primary/20 transition-all outline-none"
@@ -47,6 +86,8 @@ const SignUp = () => {
               id="password"
               name="password"
               type="password" 
+              value={formData.password}
+              onChange={handleChange}
               autoComplete="new-password"
               placeholder="••••••••" 
               className="w-full bg-surface-container-highest px-4 py-3 rounded-xl text-on-surface focus:ring-2 focus:ring-primary/20 transition-all outline-none"
@@ -56,7 +97,7 @@ const SignUp = () => {
 
           <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
              <div className="flex items-center gap-3">
-                <input type="checkbox" id="isTasker" name="isTasker" className="accent-primary w-4 h-4" />
+                <input type="checkbox" id="isTasker" name="isTasker"checked={formData.isTasker} onChange={handleChange} className="accent-primary w-4 h-4" />
                 <label htmlFor="isTasker" className="text-sm font-bold text-primary">I want to work as a Tasker</label>
              </div>
              <p className="text-[10px] text-on-surface-variant mt-2 pl-7">
