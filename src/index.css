@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold;
+  }
+}
+
+/* Custom Stitch Components */
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-2 rounded-xl transition-all hover:bg-primary-container;
+  }
+  
+  .card-tonal {
+    @apply bg-surface-container-lowest rounded-xl p-6 transition-all;
+    /* Traditional shadows are replaced by tonal layering as per Stitch guide */
+  }
+  
+  .card-hover {
+    @apply hover:bg-surface-container-low cursor-pointer;
+  }
+}

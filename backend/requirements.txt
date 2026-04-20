@@ -1,0 +1,10 @@
+﻿fastapi
+uvicorn
+pydantic
+python-dotenv
+SQLAlchemy
+PyMySQL
+requests
+python-multipart
+starlette
+email-validator
