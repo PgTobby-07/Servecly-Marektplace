@@ -64,13 +64,15 @@ const Home = () => {
     
     {/* NEW: Secret link only for Admins */}
     {user.role === 'admin' && (
-      <Link 
-        to="/admin/taxonomy" 
-        className="bg-primary/10 text-primary text-xs px-3 py-1 rounded-full font-bold hover:bg-primary/20 transition-all"
-      >
-        Manage Taxonomy →
-      </Link>
-    )}
+  <div className="flex gap-2">
+    <Link to="/admin/taxonomy" className="bg-primary/10 text-primary text-xs px-3 py-1 rounded-full font-bold hover:bg-primary/20 transition-all">
+      Manage Taxonomy
+    </Link>
+    <Link to="/admin/vetting" className="bg-secondary-container text-on-secondary-container text-xs px-3 py-1 rounded-full font-bold hover:bg-secondary/20 transition-all">
+      Vetting Pipeline
+    </Link>
+  </div>
+)}
   </div>
 )}
 
