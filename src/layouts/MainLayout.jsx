@@ -1,12 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react"; // Added useState and useEffect
 import { Link, useNavigate } from "react-router-dom";
 
 const MainLayout = ({ children }) => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(null); // Create a state for the user
   const navigate = useNavigate();
+
+  // This runs every time the component renders or the route changes
+  useEffect(() => {
+    const savedUser = sessionStorage.getItem("user"); // Using session for security
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    } else {
+      setUser(null);
+    }
+  }, []);
+
   const Logout = () => {
-    localStorage.removeItem("user");
-    navigate("/login"); // Smoother transition than window.location
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    setUser(null); // Clear state so the UI updates immediately
+    navigate("/login");
   };
   return (
     <div className="min-h-screen flex flex-col bg-surface font-sans selection:bg-primary-fixed selection:text-on-primary-fixed">
