@@ -43,46 +43,65 @@ const Home = () => {
 
   return (
     <div className="animate-in fade-in duration-500">
+   
       {/* Hero Section */}
-      <section className="bg-surface-container-low py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="max-w-3xl">
-            {user && (
-  <p className="text-lg text-primary font-semibold mb-4">
-    {user.role === 'admin' && "System Administrator: "}
-    {user.role === 'tasker' && "Ready to work, "}
-    {user.role === 'users' && "Welcome back, "} 
-    {user.name}
-  </p>
-)}
+<section className="bg-surface-container-low py-20">
+  <div className="max-w-7xl mx-auto px-6">
+    {/* Added 'flex' and 'items-center' to align text and image */}
+    <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+      
+      {/* Left Side: Text Content */}
+      <div className="max-w-2xl"> 
+        {user && (
+          <p className="text-lg text-primary font-semibold mb-4">
+            {user.role === 'admin' && "System Administrator: "}
+            {user.role === 'tasker' && "Ready to work, "}
+            {user.role === 'users' && "Welcome back, "} 
+            {user.name}
+          </p>
+        )}
 
-            <h1 className="text-5xl md:text-7xl text-on-surface mb-6 leading-tight">
-              Expert help, <br />
-              <span className="text-primary-container font-extrabold">
-                curated precision.
-              </span>
-            </h1>
-            <p className="text-on-surface-variant text-xl mb-10 leading-relaxed">
-              Connect {user?.name || "today"} with vetted professionals for home
-              repairs, moving, assembly, and more. The architectural standard
-              for service marketplaces.
-            </p>
+        <h1 className="text-5xl md:text-7xl text-on-surface mb-6 leading-tight">
+          Expert help, <br />
+          <span className="text-primary-container font-extrabold">
+            curated precision.
+          </span>
+        </h1>
+        <p className="text-on-surface-variant text-xl mb-10 leading-relaxed">
+          Connect {user?.name || "today"} with vetted professionals for home
+          repairs, moving, assembly, and more. The architectural standard
+          for service marketplaces.
+        </p>
 
-          <form onSubmit={handleSearch} className="flex-grow relative">
-           <input
-                type="text"
-               value={searchQuery}
-               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="What do you need help with?"
-              className="w-full bg-surface-container-highest px-6 py-5 rounded-2xl ..."
-           />
-          <button type="submit" className="absolute right-4 top-4 bg-primary p-3 ...">
-              {/* Magnifying glass icon */}
-           </button>
-</form>
-          </div>
-        </div>
-      </section>
+        <form onSubmit={handleSearch} className="relative w-full">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="What do you need help with?"
+            className="w-full bg-surface-container-highest px-6 py-5 rounded-2xl outline-none focus:ring-2 focus:ring-primary"
+          />
+          <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 bg-primary text-white p-3 rounded-xl">
+            {/* Simple Search Icon using SVG */}
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      {/* Right Side: Your Image (fdx.jpg) */}
+      <div className="hidden md:block w-full max-w-md">
+        <img 
+          src={fdxImage} 
+          alt="Service illustration" 
+          className="rounded-3xl shadow-2xl object-cover w-full h-[450px]"
+        />
+      </div>
+
+    </div>
+  </div>
+</section>
 
       {/* Categories Grid */}
       <section className="py-20 max-w-7xl mx-auto px-6">
