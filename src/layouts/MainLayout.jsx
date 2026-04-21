@@ -55,12 +55,6 @@ const MainLayout = ({ children }) => {
           {user ? null : (
             <div className="flex items-center gap-4">
               <Link
-                to="/login"
-                className="text-sm font-medium text-on-surface-variant hover:text-primary"
-              >
-                Sign In
-              </Link>
-              <Link
                 to="/signup"
                 className="btn-primary text-sm font-semibold shadow-sm"
               >
