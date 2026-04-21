@@ -56,7 +56,7 @@ const MainLayout = ({ children }) => {
               Post a Task
             </Link>
           </div>
-          {user ? null : (
+          
             <div className="flex items-center gap-4 ml-auto">
               <nav>
             {user ? (
@@ -65,6 +65,7 @@ const MainLayout = ({ children }) => {
               <Link to="/login">Login</Link>
             )}
           </nav> 
+              {user ? null : (
               <Link
                 to="/signup"
                 className="btn-primary text-sm font-semibold shadow-sm"
