@@ -55,7 +55,7 @@ const MainLayout = ({ children }) => {
             {user ? (
               <div className="flex items-center gap-4">
                 <span className="text-sm font-medium text-on-surface-variant">
-                  Hi, {user.name.split(' ')[0]}
+                  {user.role === 'admin' ? "Admin Mode" : `Hi, ${user.name.split(' ')[0]}`}
                 </span>
                 <button 
                   onClick={Logout}
