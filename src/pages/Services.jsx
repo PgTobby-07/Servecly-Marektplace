@@ -6,23 +6,24 @@ const Services = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState(null);
 
-  // Consistency check with your Login.jsx environment variables
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  // Reverting to your production Render URL as requested
+  const API_URL = import.meta.env.VITE_API_URL || 'https://servecly-api.onrender.com';
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setError(null);
-        // Updated to match your Swagger UI prefix: /v1/services/categories
+        // Step 1: Hit the specific categories endpoint
         const response = await fetch(`${API_URL}/v1/services/categories`);
         
-        if (!response.ok) throw new Error('Failed to connect to backend');
+        if (!response.ok) throw new Error('Could not synchronize with Servecly Cloud');
 
         const data = await response.json();
+        // Step 2: Update state with REAL database rows
         setCategories(data);
       } catch (err) {
         console.error("Fetch error:", err);
-        setError("Unable to connect to the backend. Showing demo data.");
+        setError("Marketplace connectivity lost. Please refresh.");
       }
     };
 
@@ -31,7 +32,8 @@ const Services = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 animate-in slide-in-from-bottom-4 duration-700">
-      {/* Error Alert */}
+      
+      {/* change: Alert now only shows for actual errors, no more "Showing Demo Data" msg */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl mb-8 text-sm font-medium">
           ⚠️ {error}
@@ -48,15 +50,12 @@ const Services = () => {
           <div className="flex-grow md:w-64">
              <input 
                type="text" 
-               placeholder="Filter services..." 
+               placeholder="Search live tasks..." 
                value={searchQuery}
                onChange={(e) => setSearchQuery(e.target.value)}
-               className="w-full bg-surface-container-high px-4 py-2 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary/30"
+               className="w-full bg-surface-container-high px-4 py-2 rounded-xl text-sm focus:outline-none"
              />
           </div>
-          <button className="bg-surface-container-highest px-6 py-2 rounded-xl text-sm font-semibold">
-            Map View
-          </button>
         </div>
       </div>
 
@@ -66,35 +65,25 @@ const Services = () => {
             <h3 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">Categories</h3>
             <ul className="space-y-2 text-sm">
               <li className="text-primary font-bold cursor-pointer">All Services</li>
-              {/* Map backend categories */}
+              
+              {/* change: Removed hardcoded "Home Repair" and "Furniture" list items */}
               {categories.length > 0 ? (
                 categories.map((cat) => (
                   <li key={cat.id} className="hover:text-primary cursor-pointer transition-colors flex justify-between">
                     <span>{cat.name}</span>
-                    <span className="opacity-50">({cat.taskerCount})</span>
+                    <span className="opacity-40 text-[10px] font-bold">[{cat.taskerCount || 0}]</span>
                   </li>
                 ))
               ) : (
-                <>
-                  <li className="hover:text-primary cursor-pointer">Home Repair</li>
-                  <li className="hover:text-primary cursor-pointer">Furniture Assembly</li>
-                </>
+                <p className="text-xs italic opacity-50">No categories found in DB.</p>
               )}
             </ul>
-          </div>
-          {/* Price Range Slider */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">Price Range</h3>
-            <input type="range" className="w-full accent-primary" />
-            <div className="flex justify-between text-xs mt-2 opacity-60">
-              <span>$15/hr</span>
-              <span>$150/hr</span>
-            </div>
           </div>
         </aside>
 
         <div className="lg:col-span-3">
-          {/* We pass the search query to TaskList to fetch filtered results */}
+          {/* change: TaskList now handles only real API data. 
+              If DB is empty, TaskList will show "No services found" */}
           <TaskList query={searchQuery} />
         </div>
       </div>
