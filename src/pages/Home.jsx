@@ -47,11 +47,11 @@ const Home = () => {
       <section className="bg-surface-container-low py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-3xl">
-            {user && ( //NEW CHANGE
-              <p className="text-lg text-primary font-semibold mb-4">
-                Welcome back, {user?.name || "User"}
-              </p>
-            )}
+            {user && (
+  <p className="text-lg text-primary font-semibold mb-4">
+    {user.role === 'admin' ? "Ready to work," : "Welcome back,"} {user.name}
+  </p>
+)}
 
             <h1 className="text-5xl md:text-7xl text-on-surface mb-6 leading-tight">
               Expert help, <br />
