@@ -162,12 +162,25 @@ const handleSubmit = async (e) => {
       : "Start posting tasks and getting help today."}
   </p>
 </div>
+        {/* Error Message Display */}
+{error && (
+  <div className="bg-error-container/10 border border-error/20 p-4 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-1">
+    <span className="text-xl">⚠️</span>
+    <p className="text-xs font-bold text-error">
+      {error.includes("email") ? "This email is already registered." : error}
+    </p>
+  </div>
+)}
 
-          <button type="submit" className="btn-primary py-4 text-sm font-bold w-full">
-            Get Started
-          </button>
-        </form>
-
+<button 
+  type="submit" 
+  disabled={loading}
+  className={`btn-primary py-4 text-sm font-bold w-full transition-opacity ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+>
+  {loading ? "Creating account..." : "Get Started"}
+</button>
+          
+       
         <div className="text-center">
           <p className="text-sm text-on-surface-variant">
             Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log in</Link>
