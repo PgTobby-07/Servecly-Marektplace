@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react"; // 1. Added useState and useEffect here
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   // 2. This creates a "Live" variable that React watches
   const [user, setUser] = useState(null);
+   const [searchQuery, setSearchQuery] = useState("");
+   const navigate = useNavigate();
 
+  const handleSearch = (e) => {
+   e.preventDefault();
+  if (!searchQuery.trim()) return;
+  
+  // Navigate to your services page with the search term in the URL
+  navigate(`/services?search=${encodeURIComponent(searchQuery)}`);
+}; 
   // 3. This runs automatically when the page loads
  useEffect(() => {
     const checkUser = () => {
@@ -55,32 +65,18 @@ const Home = () => {
               for service marketplaces.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-grow relative">
-                <input
-                  type="text"
-                  placeholder="What do you need help with?"
-                  className="w-full bg-surface-container-highest px-6 py-5 rounded-2xl text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-lg shadow-sm"
-                />
-                <div className="absolute right-4 top-4">
-                  <button className="bg-primary p-3 rounded-xl text-white hover:scale-105 transition-transform">
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
+          <form onSubmit={handleSearch} className="flex-grow relative">
+           <input
+                type="text"
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="What do you need help with?"
+              className="w-full bg-surface-container-highest px-6 py-5 rounded-2xl ..."
+           />
+          <button type="submit" className="absolute right-4 top-4 bg-primary p-3 ...">
+              {/* Magnifying glass icon */}
+           </button>
+</form>
           </div>
         </div>
       </section>
