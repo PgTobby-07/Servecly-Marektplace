@@ -1,83 +1,87 @@
-import React, { useState, useEffect } from "react"; // Added useState and useEffect
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const MainLayout = ({ children }) => {
-  const [user, setUser] = useState(null); // Create a state for the user
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-    useEffect(() => {
+  // This logic syncs the user state across the entire app
+  useEffect(() => {
     const checkUser = () => {
-      const savedUser = localStorage.getItem("user");
+      const savedUser = localStorage.getItem("user"); // Use localStorage (Consistent with Home)
       if (savedUser) {
         setUser(JSON.parse(savedUser));
+      } else {
+        setUser(null);
       }
     };
 
     checkUser();
-    // This adds an extra layer of protection if the storage changes
+    // Syncs state if user logs in/out in another tab
     window.addEventListener('storage', checkUser);
     return () => window.removeEventListener('storage', checkUser);
   }, []);
 
   const Logout = () => {
-    sessionStorage.removeItem("user");
-    sessionStorage.removeItem("token");
-    setUser(null); // Clear state so the UI updates immediately
+    localStorage.removeItem("user"); // Clear the same storage Home reads from
+    localStorage.removeItem("token");
+    setUser(null); 
     navigate("/login");
   };
+
   return (
     <div className="min-h-screen flex flex-col bg-surface font-sans selection:bg-primary-fixed selection:text-on-primary-fixed">
-      {/* Header with Frosted Glass Effect */}
+      {/* Header */}
       <header className="sticky top-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-outline-variant/15">
         <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-container rounded-lg flex items-center justify-center text-white font-bold">
-              S
-            </div>
-            <span className="text-xl font-display font-bold tracking-tight text-primary">
-              Servecly
-            </span>
-          </Link>
+          <div className="flex items-center gap-12">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-container rounded-lg flex items-center justify-center text-white font-bold">
+                S
+              </div>
+              <span className="text-xl font-display font-bold tracking-tight text-primary">
+                Servecly
+              </span>
+            </Link>
 
-          <div className="hidden md:flex items-center gap-8 ml-12 text-sm font-medium text-on-surface-variant">
-            <Link to="/" className="hover:text-primary transition-colors">
-              Categories
-            </Link>
-            <Link
-              to="/services"
-              className="hover:text-primary transition-colors"
-            >
-              Find Help
-            </Link>
-            <Link
-              to="/post-task"
-              className="hover:text-primary transition-colors"
-            >
-              Post a Task
-            </Link>
-          </div>
-          
-            <div className="flex items-center gap-4 ml-auto">
-              
-              {user ? (
-              <button onClick={Logout}>Logout</button>
-            ) : (
-              <Link to="/login">Login</Link>
-            )}
-          
-              {user ? null : (
-              <Link
-                to="/signup"
-                className="btn-primary text-sm font-semibold shadow-sm"
-              >
-                Sign Up
-              </Link>
+            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-on-surface-variant">
+              <Link to="/" className="hover:text-primary transition-colors">Categories</Link>
+              <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
+              <Link to="/post-task" className="hover:text-primary transition-colors">Post a Task</Link>
             </div>
-          )}
-          
+          </div>
+
+          <div className="flex items-center gap-6">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-on-surface-variant">
+                  Hi, {user.name.split(' ')[0]}
+                </span>
+                <button 
+                  onClick={Logout}
+                  className="text-sm font-semibold text-primary hover:text-primary-dim transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4">
+                <Link to="/login" className="text-sm font-medium text-on-surface-variant hover:text-primary">
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm hover:bg-primary/90 transition-all"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
         </nav>
       </header>
 
+      {/* This renders your Home page (or any other page) */}
       <main className="flex-grow">{children}</main>
 
       {/* Footer */}
