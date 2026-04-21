@@ -73,11 +73,18 @@ const ProfileSetup = () => {
           year: 'numeric' 
         })
       };
-
+// --- PUT THE NEW CODE HERE ---
+      // 1. Send the data to your backend
       await axios.patch(`${API_URL}/v1/admin/vetting/${userId}`, payload);
       
+      // 2. Show a quick confirmation (Optional)
       alert("Profile submitted! Please wait for admin approval.");
-      navigate('/dashboard'); 
+      
+      // 3. Redirect the user to the Dashboard
+      // We pass 'submitted: true' so the Dashboard knows to show a success message
+      navigate('/dashboard', { state: { submitted: true } }); 
+      // -----------------------------
+      
     } catch (err) {
       console.error("Submission error:", err);
       alert("Failed to submit profile. Check your backend connection.");
