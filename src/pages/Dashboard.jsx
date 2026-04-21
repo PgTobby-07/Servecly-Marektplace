@@ -49,6 +49,29 @@ const Dashboard = () => {
             Here is an overview of your tasking performance
           </p>
         </div>
+        {/* Add this to the top of your Dashboard content area */}
+{user?.status === 'pending' && (
+  <div className="mb-8 p-8 rounded-3xl bg-amber-50 border border-amber-100 animate-in fade-in zoom-in duration-500">
+    <div className="flex items-center gap-4 mb-4">
+      <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-2xl">⏳</div>
+      <div>
+        <h2 className="text-xl font-bold text-amber-900">Application Under Review</h2>
+        <p className="text-amber-700 text-sm">The Servecly Admin team is currently vetting your profile.</p>
+      </div>
+    </div>
+    
+    <div className="space-y-3">
+      <div className="flex items-center gap-3 text-xs font-bold text-amber-800/60 uppercase tracking-widest">
+        <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+        Verification Step: Documents Received
+      </div>
+      <p className="text-sm text-amber-800/80 leading-relaxed">
+        You'll get full access to the **Marketplace** and **Services** once your 
+        background check and skills are verified. This usually takes 24-48 hours.
+      </p>
+    </div>
+  </div>
+)}
         <button className="btn-primary py-3 px-8 text-sm font-bold shadow-xl shadow-primary/20">
           Open New Slots
         </button>
