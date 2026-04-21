@@ -3,9 +3,21 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from config.database import get_db
 from models.auth_models import LoginRequest, SignupRequest
+from jose import jwt
+from datetime import datetime, timedelta
 
 router = APIRouter(tags=["Authentication"])
+# Settings for the token
+SECRET_KEY = "praise_god_tobby_secret_key" # Keep this secret!
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 # Token lasts 24 hours
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
+@router.post("/login")
 @router.post("/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
     result = db.execute(text("""
@@ -18,8 +30,11 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     if not result:
         return {"error": "Invalid credentials"}
 
+    # CREATE THE REAL TOKEN
+    access_token = create_access_token(data={"sub": str(result[0])})
+
     return {
-        "token": "eyJhbG...",
+        "token": access_token,
         "user": {
             "id": result[0],
             "name": result[1] + " " + result[2],
