@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"; // 1. Added useState and useEffect here
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import fdxImage from "../assets/fdx.png"; // Adjust path if your folder is named 'assets'
 
 const Home = () => {
   // 2. This creates a "Live" variable that React watches
