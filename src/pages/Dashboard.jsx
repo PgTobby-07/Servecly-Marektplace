@@ -1,151 +1,185 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-
-// 1. Configure the API connection
-const api = axios.create({
-  baseURL: "https://servecly-api.onrender.com",
-});
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user") || "{}"));
-  const [dataList, setDataList] = useState([]);
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [liveData, setLiveData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const API_URL = import.meta.env.VITE_API_URL || 'https://servecly-api.onrender.com';
+
   useEffect(() => {
-    const fetchRealData = async () => {
-      // Get the token from your login session
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
+    const initDashboard = async () => {
+      const savedUser = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
+
+      if (!savedUser || !token) {
+        navigate("/login");
+        return;
+      }
+
+      const parsedUser = JSON.parse(savedUser);
+      setUser(parsedUser);
 
       try {
-        let response;
-        /* 2. LOGIC: Route the request based on the logged-in user's role */
-        if (user.role === 'admin') {
-          response = await api.get('/v1/admin/vetting/pending', config);
-        } else if (user.role === 'tasker') {
-          response = await api.get('/v1/tasks', config);
-        } else {
-          response = await api.get('/v1/bookings', config);
-        }
+        // Dynamic Endpoint Selection based on Role
+        let endpoint = `${API_URL}/v1/tasks`; 
+        if (parsedUser.role === 'admin') endpoint = `${API_URL}/v1/admin/vetting/pending`;
+        if (parsedUser.role === 'user') endpoint = `${API_URL}/v1/bookings`;
 
-        // Apply real data from Render backend
-        setDataList(response.data || []);
+        const response = await fetch(endpoint, {
+          method: 'GET',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+          },
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          setLiveData(Array.isArray(data) ? data : []);
+        }
       } catch (err) {
-        console.error("Connection to Render failed:", err);
-        setDataList([]);
+        console.error("API Fetch Error:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (user?.role) fetchRealData();
-  }, [user]);
+    initDashboard();
+  }, [navigate, API_URL]);
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F9FBFC]">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-sm font-bold opacity-50 uppercase tracking-widest">Waking up Render Server...</p>
-      </div>
-    </div>
-  );
+  const getGreeting = () => {
+    if (user?.role === 'admin') return `System Control: ${user.name}`;
+    if (user?.role === 'tasker') return `Workspace: ${user.name}`;
+    return `Hello, ${user?.name?.split(' ')[0] || 'User'}`;
+  };
+
+  if (loading) return <div className="p-20 text-center font-display opacity-50">Syncing with Servecly...</div>;
 
   return (
-    <div className="min-h-screen bg-[#F9FBFC] text-slate-900">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        
-        {/* HEADER: Professional & Tight */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm">
-          <div>
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{user.role} Portal</span>
-            <h1 className="text-3xl font-display font-bold mt-1">
-              {user.role === 'admin' ? 'Marketplace Oversight' : 'Your Dashboard'}
-            </h1>
-            <p className="text-slate-500 text-sm italic">Active: {user.name}</p>
-          </div>
-          <div className="flex gap-2">
-            <button className="bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-primary transition-all shadow-lg shadow-primary/10">
-              Refresh Feed
-            </button>
-          </div>
+    <div className="max-w-7xl mx-auto px-6 py-12 animate-in fade-in duration-500">
+      
+      {/* HEADER SECTION */}
+      <div className="flex justify-between items-end mb-12">
+        <div>
+          <h1 className="text-4xl font-display font-bold text-on-surface mb-2">
+            {getGreeting()}
+          </h1>
+          <p className="text-on-surface-variant text-sm">
+            {user?.role === 'admin' ? 'Marketplace integrity and oversight' : 'Your Servecly activity at a glance'}
+          </p>
         </div>
-
-        {/* CONTENT GRID: 8 columns for feed, 4 for stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
-          {/* MAIN COLUMN (The Feed) */}
-          <div className="lg:col-span-8">
-            <div className="bg-white rounded-[2rem] border border-slate-200/60 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                <h2 className="text-xs font-bold uppercase text-slate-400">Live Action Stream</h2>
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              </div>
-
-              <div className="divide-y divide-slate-100">
-                {dataList.length > 0 ? dataList.map((item, idx) => (
-                  <div key={idx} className="p-6 flex items-center justify-between hover:bg-slate-50/80 transition-all group">
-                    <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
-                        {user.role === 'admin' ? '🛡️' : '📋'}
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-sm">{item.title || item.full_name || "System Entry"}</h4>
-                        <p className="text-[11px] text-slate-400 font-medium">
-                          ID: #{item.id} • Status: <span className="text-primary">{item.status || 'Active'}</span>
-                        </p>
-                      </div>
-                    </div>
-                    <button className="text-[10px] font-bold text-slate-400 hover:text-primary uppercase tracking-widest transition-colors">
-                      View Details →
-                    </button>
-                  </div>
-                )) : (
-                  <div className="py-24 text-center">
-                    <p className="text-sm text-slate-400 italic">No real data found at {user.role} endpoints yet.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* SIDEBAR COLUMN (The Stats) */}
-          <div className="lg:col-span-4 space-y-6">
-            {/* Real Stats Card */}
-            <div className="bg-white p-8 rounded-[2rem] border border-slate-200/60 shadow-sm relative overflow-hidden group">
-               <div className="relative z-10">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-6">Marketplace Standing</p>
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-3xl font-display font-bold">4.95</h3>
-                      <p className="text-[10px] font-bold text-primary uppercase">Average Rating</p>
-                    </div>
-                    <div className="pt-6 border-t border-slate-100">
-                      <h3 className="text-3xl font-display font-bold">{dataList.length}</h3>
-                      <p className="text-[10px] font-bold text-primary uppercase">Total Records Found</p>
-                    </div>
-                  </div>
-               </div>
-               {/* Design decoration */}
-               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full group-hover:bg-primary/10 transition-all"></div>
-            </div>
-
-            {/* Support/Quick Links */}
-            <div className="bg-slate-900 p-8 rounded-[2rem] text-white shadow-xl shadow-slate-900/10">
-              <h4 className="text-sm font-bold mb-4">Quick Actions</h4>
-              <div className="space-y-3">
-                <button className="w-full py-3 bg-white/10 rounded-xl text-[11px] font-bold hover:bg-white/20 transition-all">Support Center</button>
-                <button className="w-full py-3 bg-white/10 rounded-xl text-[11px] font-bold hover:bg-white/20 transition-all">System Settings</button>
-              </div>
-            </div>
-          </div>
-
-        </div>
+        {user?.role === 'tasker' && (
+          <button onClick={() => navigate('/availability')} className="btn-primary py-3 px-8 text-sm font-bold shadow-lg">
+            Manage Availability
+          </button>
+        )}
       </div>
+
+      {/* DYNAMIC CONTENT LOADERS */}
+      {user?.role === 'admin' ? <AdminView navigate={navigate} data={liveData} /> : 
+       user?.role === 'tasker' ? <TaskerView data={liveData} /> : 
+       <CustomerView navigate={navigate} data={liveData} />}
     </div>
   );
 };
+
+/* --- SECTION 1: ADMIN VIEW (For Pg) --- */
+const AdminView = ({ navigate, data }) => (
+  <div className="space-y-12">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div onClick={() => navigate('/admin/vetting')} className="p-10 rounded-[32px] bg-primary/5 border border-primary/10 hover:border-primary/40 transition-all cursor-pointer group">
+        <div className="text-4xl mb-4">🛡️</div>
+        <h3 className="text-2xl font-bold mb-2 group-hover:text-primary">Vetting Pipeline</h3>
+        <p className="text-on-surface-variant text-sm">{data.length} Taskers awaiting verification.</p>
+      </div>
+      <div onClick={() => navigate('/admin/taxonomy')} className="p-10 rounded-[32px] bg-surface-container-low border border-outline-variant/10 hover:border-primary/40 transition-all cursor-pointer group">
+        <div className="text-4xl mb-4">🏷️</div>
+        <h3 className="text-2xl font-bold mb-2 group-hover:text-primary">Manage Taxonomy</h3>
+        <p className="text-on-surface-variant text-sm">Update service categories and classification rules.</p>
+      </div>
+    </div>
+    
+    <div className="bg-white p-8 rounded-[32px] border border-outline-variant/10">
+       <h3 className="text-xl font-bold mb-6">Live Vetting Queue</h3>
+       <div className="divide-y">
+         {data.slice(0, 5).map((applicant, i) => (
+           <TaskRow key={i} title={applicant.full_name || "New Applicant"} price={applicant.status || "Pending"} icon="👤" />
+         ))}
+       </div>
+    </div>
+  </div>
+);
+
+/* --- SECTION 2: TASKER VIEW (For Mo Salah) --- */
+const TaskerView = ({ data }) => (
+  <div className="space-y-12">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <StatCard label="Live Tasks" value={data.length} icon="🏃" />
+      <StatCard label="Completed" value="--" icon="✅" />
+      <StatCard label="Rating" value="5.0" icon="⭐" />
+      <StatCard label="Revenue" value="--" icon="📈" />
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="lg:col-span-2">
+        <h3 className="text-xl font-bold mb-6">Active Task Stream</h3>
+        <div className="bg-white rounded-3xl border border-outline-variant/10 shadow-sm divide-y">
+          {data.length > 0 ? data.map((task, i) => (
+            <TaskRow key={i} title={task.title} price={task.status} icon="🛠️" />
+          )) : (
+            <p className="p-10 text-center text-sm text-on-surface-variant italic">No tasks assigned from the backend.</p>
+          )}
+        </div>
+      </div>
+      <div className="bg-white p-8 rounded-3xl border border-outline-variant/10 shadow-sm">
+        <h3 className="text-xl font-bold mb-6">Recent Activity</h3>
+        <p className="text-sm text-on-surface-variant">Backend check: {data.length} records found.</p>
+      </div>
+    </div>
+  </div>
+);
+
+/* --- SECTION 3: CUSTOMER VIEW (For Messi) --- */
+const CustomerView = ({ navigate, data }) => (
+  <div className="space-y-12">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+       <div className="md:col-span-2 bg-white p-10 rounded-[40px] border border-outline-variant/10 shadow-sm">
+          <h2 className="text-2xl font-bold mb-4">My Bookings</h2>
+          <div className="divide-y">
+            {data.length > 0 ? data.map((booking, i) => (
+              <TaskRow key={i} title={booking.service_name || "Task Request"} price={booking.status} icon="🤝" />
+            )) : (
+              <p className="py-10 text-on-surface-variant text-sm">You haven't posted any tasks yet.</p>
+            )}
+          </div>
+       </div>
+       <div className="bg-primary/5 p-10 rounded-[40px] border border-primary/10 text-center">
+          <div className="text-5xl mb-6">✨</div>
+          <h3 className="font-bold mb-4">Need Help?</h3>
+          <button onClick={() => navigate('/services')} className="btn-primary w-full py-3 rounded-2xl text-xs">Post a New Task</button>
+       </div>
+    </div>
+  </div>
+);
+
+const StatCard = ({ label, value, icon }) => (
+  <div className="bg-white p-8 rounded-3xl border border-outline-variant/10 shadow-sm">
+    <div className="text-2xl mb-2">{icon}</div>
+    <div className="text-3xl font-display font-bold">{value}</div>
+    <div className="text-xs font-bold uppercase opacity-50 tracking-widest">{label}</div>
+  </div>
+);
+
+const TaskRow = ({ title, price, icon }) => (
+  <div className="flex justify-between p-6 hover:bg-primary/5 transition-colors cursor-pointer">
+    <div className="flex gap-4 items-center">
+      <div className="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center">{icon}</div>
+      <div className="text-sm font-bold">{title}</div>
+    </div>
+    <div className="text-primary font-bold text-xs uppercase tracking-widest">{price}</div>
+  </div>
+);
 
 export default Dashboard;
