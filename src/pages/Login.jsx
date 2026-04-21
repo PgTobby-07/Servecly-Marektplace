@@ -1,8 +1,10 @@
 import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState('');
  
 // This tells React: "Use the URL from the .env file. If you can't find it, use localhost."
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -13,6 +15,7 @@ const handleLogin = async (e) => {
   const password = formData.get('password');
 
   try {
+    setError('');
     const response = await fetch(`${API_URL}/v1/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -32,7 +35,7 @@ const handleLogin = async (e) => {
     window.location.href = "/"; 
 
     } else {
-      alert(data.error || 'Something went wrong');
+      setError('Incorrect email or password');    //replaced this : alert(data.error || 'Something went wrong');
     }
   } catch (err) {
     console.error("Connection failed:", err);
@@ -88,7 +91,13 @@ const handleLogin = async (e) => {
           <button type="submit" className="btn-primary py-4 text-sm font-bold w-full">
             Log In
           </button>
+          {error && (
+         <p className="text-red-500 text-sm text-center font-medium">
+          {error}
+            </p>
+)}
         </form>
+        
 
         <div className="text-center">
           <p className="text-sm text-on-surface-variant">
