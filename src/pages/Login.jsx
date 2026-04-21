@@ -22,13 +22,15 @@ const handleLogin = async (e) => {
     const data = await response.json();
 
     if (response.ok && !data.error) {
-      // FIX STARTS HERE: 
-      // Switch from localStorage to sessionStorage 
-      // This ensures data is deleted when the tab is closed.
-      sessionStorage.setItem('token', data.token);
-      sessionStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+  
+  // If you are using the AuthContext/MainLayout state:
+  // login(data.user); 
 
-      navigate('/');
+  // Force a quick reload to ensure Home.jsx sees the new localStorage
+    window.location.href = "/"; 
+
     } else {
       alert(data.error || 'Something went wrong');
     }
