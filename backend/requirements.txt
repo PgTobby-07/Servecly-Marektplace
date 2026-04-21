@@ -1,6 +1,6 @@
 ﻿fastapi
 uvicorn
-"python-jose[cryptography]"
+python-jose[cryptography]
 pydantic
 python-dotenv
 SQLAlchemy
