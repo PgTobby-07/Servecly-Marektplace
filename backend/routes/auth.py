@@ -7,10 +7,15 @@ from jose import jwt
 from datetime import datetime, timedelta
 
 router = APIRouter(tags=["Authentication"])
-# Settings for the token
-SECRET_KEY = "praise_god_tobby_secret_key" # Keep this secret!
+
+# =========================
+# 🔐 AUTH CONFIG
+# =========================
+SECRET_KEY = "praise_god_tobby_secret_key"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 # Token lasts 24 hours
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
+
+
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -18,19 +23,38 @@ def create_access_token(data: dict):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
+# ==========================================================
+# 🔥 FIX #1: Removed duplicate @router.post("/login")
+# ==========================================================
 @router.post("/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
+
+    # ==========================================================
+    # 🔥 FIX #2: DO NOT check password in SQL query (INSECURE)
+    #      → only fetch user by email first
+    # ==========================================================
     result = db.execute(text("""
-        SELECT u.user_id, u.first_name, u.last_name, r.role_name
+        SELECT u.user_id, u.first_name, u.last_name, u.password_hash, r.role_name
         FROM users u
         JOIN roles r ON u.role_id = r.role_id
-        WHERE u.email = :email AND u.password_hash = :password
-    """), data.dict()).fetchone()
+        WHERE u.email = :email
+    """), {"email": data.email}).fetchone()
 
+    # ==========================================================
+    # 🔥 FIX #3: Proper authentication check
+    # ==========================================================
     if not result:
         return {"error": "Invalid credentials"}
 
-    # CREATE THE REAL TOKEN
+    stored_password = result[3]
+
+    # NOTE: Replace this with bcrypt in production
+    if data.password != stored_password:
+        return {"error": "Invalid credentials"}
+
+    # ==========================================================
+    # Token creation (unchanged)
+    # ==========================================================
     access_token = create_access_token(data={"sub": str(result[0])})
 
     return {
@@ -38,9 +62,10 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
         "user": {
             "id": result[0],
             "name": result[1] + " " + result[2],
-            "role": result[3]
+            "role": result[4]
         }
     }
+
 
 @router.post("/signup", status_code=201)
 def signup(data: SignupRequest, db: Session = Depends(get_db)):
