@@ -7,8 +7,8 @@ import MainLayout from "../layouts/MainLayout";
 const Dashboard = () => {
   const navigate = useNavigate();
   const Logout = () => {
-    localStorage.removeItem("user");
-    navigate("/login"); // Smoother transition than window.location
+    sessionStorage.clear(); // Wipes token and user data
+    navigate('/login');//Smoother transition than window.location
   };
   const stats = [
     { label: "This Month", value: "$2,450", change: "+12%", icon: "📈" },
