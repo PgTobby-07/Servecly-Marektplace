@@ -95,6 +95,15 @@ const MainLayout = ({ children }) => {
               <span className="text-lg font-display font-bold text-primary">
                 Servecly
               </span>
+              {/* Inside your Navbar links mapping or list */}
+           {user?.role === 'tasker' && user?.status === 'new' && (
+                 <Link 
+    to="/profile-setup" 
+    className="text-sm font-bold text-primary bg-primary/10 px-4 py-2 rounded-lg hover:bg-primary/20 transition-all"
+  >
+    🚀 Complete Setup
+  </Link>
+)}
             </div>
             <p className="text-sm text-on-surface-variant max-w-xs">
               Built with professional-grade precision for a two-sided service
