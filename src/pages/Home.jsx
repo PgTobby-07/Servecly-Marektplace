@@ -49,7 +49,10 @@ const Home = () => {
           <div className="max-w-3xl">
             {user && (
   <p className="text-lg text-primary font-semibold mb-4">
-    {user.role === 'admin' ? "Ready to work," : "Welcome back,"} {user.name}
+    {user.role === 'admin' && "System Administrator: "}
+    {user.role === 'tasker' && "Ready to work, "}
+    {user.role === 'users' && "Welcome back, "} 
+    {user.name}
   </p>
 )}
 
