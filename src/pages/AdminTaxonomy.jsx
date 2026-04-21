@@ -1,7 +1,34 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 
 const AdminTaxonomy = () => {
+  // 1. Get the user from storage
+  const [user] = useState(JSON.parse(localStorage.getItem("user")));
+
+  // 2. The Security Gate (Place this BEFORE any other logic or the return statement)
+  if (!user || user.role !== 'admin') {
+    return (
+  <div className="min-h-screen flex items-center justify-center bg-surface-container-low">
+    <div className="text-center p-12 card-tonal bg-white max-w-md rounded-3xl shadow-lg">
+      <div className="text-6xl mb-6">🚫</div>
+      <h2 className="text-2xl font-display text-error mb-4 font-bold">Access Denied</h2>
+      <p className="text-on-surface-variant mb-8 leading-relaxed">
+        This area is reserved for the Servecly Architectural Team. 
+        You do not have administrative privileges.
+      </p>
+      
+      {/* This is your link back to safety */}
+      <Link 
+        to="/" 
+        className="btn-primary py-3 px-10 rounded-xl inline-block shadow-md hover:shadow-xl transition-all font-bold"
+      >
+        Go Back Home
+      </Link>
+    </div>
+  </div>
+);
+  }
   const [categories, setCategories] = useState([
     {
       id: 1,
