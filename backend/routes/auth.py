@@ -29,8 +29,10 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
 
 @router.post("/signup", status_code=201)
 def signup(data: SignupRequest, db: Session = Depends(get_db)):
-    first, last = data.name.split(" ", 1)
-
+    name_parts = data.name.split(" ", 1)
+    first = name_parts[0]
+    last = name_parts[1] if len(name_parts) > 1 else ""
+    
     role = db.execute(text("""
         SELECT role_id FROM roles WHERE role_name = :role
     """), {"role": data.role}).fetchone()
