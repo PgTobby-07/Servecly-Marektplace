@@ -8,38 +8,32 @@ const Login = () => {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const handleLogin = async (e) => {
   e.preventDefault();
-
-  // 1. Grab data from form fields
   const formData = new FormData(e.currentTarget);
   const email = formData.get('email');
   const password = formData.get('password');
 
   try {
-    // 2. Call your FastAPI endpoint
-    const response = await fetch(`${API_URL}/v1/auth/login`, {      //'http://localhost:8000/v1/auth/login'
+    const response = await fetch(`${API_URL}/v1/auth/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }), // matches your LoginRequest schema
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
 
     if (response.ok && !data.error) {
-      // 3. Success! Store the token and user info
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      // FIX STARTS HERE: 
+      // Switch from localStorage to sessionStorage 
+      // This ensures data is deleted when the tab is closed.
+      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('user', JSON.stringify(data.user));
 
-      // 4. Send them home
       navigate('/');
     } else {
-      // 5. Handle the "Invalid credentials" error from your Python code
       alert(data.error || 'Something went wrong');
     }
   } catch (err) {
     console.error("Connection failed:", err);
-    alert("Could not connect to the server.");
   }
 };
   return (
