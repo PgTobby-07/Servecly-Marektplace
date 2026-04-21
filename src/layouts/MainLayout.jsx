@@ -5,14 +5,18 @@ const MainLayout = ({ children }) => {
   const [user, setUser] = useState(null); // Create a state for the user
   const navigate = useNavigate();
 
-  // This runs every time the component renders or the route changes
-  useEffect(() => {
-    const savedUser = sessionStorage.getItem("user"); // Using session for security
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    } else {
-      setUser(null);
-    }
+    useEffect(() => {
+    const checkUser = () => {
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    };
+
+    checkUser();
+    // This adds an extra layer of protection if the storage changes
+    window.addEventListener('storage', checkUser);
+    return () => window.removeEventListener('storage', checkUser);
   }, []);
 
   const Logout = () => {
