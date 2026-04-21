@@ -35,7 +35,7 @@ const MainLayout = ({ children }) => {
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-on-surface-variant">
+          <div className="hidden md:flex items-center gap-8 ml-12 text-sm font-medium text-on-surface-variant">
             <Link to="/" className="hover:text-primary transition-colors">
               Categories
             </Link>
