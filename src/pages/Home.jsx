@@ -42,75 +42,86 @@ const Home = () => {
     { id: 8, name: "Office", icon: "💻", count: "400+ Taskers" },
   ];
 
-  return (
+ return (
     <div className="animate-in fade-in duration-500">
-   
-      {/* Hero Section */}
-<section className="bg-surface-container-low py-20">
-  <div className="max-w-7xl mx-auto px-6">
-    {/* Added 'flex' and 'items-center' to align text and image */}
-    <div className="flex flex-col md:flex-row items-center justify-between gap-12">
       
-      {/* Left Side: Text Content */}
-      <div className="max-w-2xl"> 
-        {user && (
-          <p className="text-lg text-primary font-semibold mb-4">
-            {user.role === 'admin' && "System Administrator: "}
-            {user.role === 'tasker' && "Ready to work, "}
-            {user.role === 'users' && "Welcome back, "} 
-            {user.name}
-          </p>
-        )}
+      {/* Hero Section */}
+      <section className="bg-surface-container-low py-20 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* 1. Alignment Fix: 'items-center' ensures text and image are vertically centered */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-16">
+            
+            {/* Left Side: Text Content */}
+            <div className="max-w-2xl w-full"> 
+              {user && (
+                <p className="text-lg text-primary font-semibold mb-4 tracking-wide">
+                  {user.role === 'admin' && "System Administrator: "}
+                  {user.role === 'tasker' && "Ready to work, "}
+                  {user.role === 'users' && "Welcome back, "} 
+                  {user.name}
+                </p>
+              )}
 
-        <h1 className="text-5xl md:text-7xl text-on-surface mb-6 leading-tight">
-          Expert help, <br />
-          <span className="text-primary-container font-extrabold">
-            curated precision.
-          </span>
-        </h1>
-        <p className="text-on-surface-variant text-xl mb-10 leading-relaxed">
-          Connect {user?.name || "today"} with vetted professionals for home
-          repairs, moving, assembly, and more. The architectural standard
-          for service marketplaces.
-        </p>
+              {/* 2. Typography Fix: 'tracking-tight' and 'font-bold' for a premium look */}
+              <h1 className="text-5xl md:text-7xl text-on-surface mb-6 leading-[1.1] tracking-tight font-bold">
+                Expert help, <br />
+                <span className="text-primary font-extrabold">
+                  curated precision.
+                </span>
+              </h1>
+              
+              {/* 3. Spacing Fix: 'max-w-xl' and 'opacity-90' for better readability */}
+              <p className="text-on-surface-variant text-xl mb-10 leading-relaxed max-w-xl opacity-90">
+                Connect {user?.name || "today"} with vetted professionals for home
+                repairs, moving, assembly, and more. The architectural standard
+                for service marketplaces.
+              </p>
 
-        <form onSubmit={handleSearch} className="relative w-full">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="What do you need help with?"
-            className="w-full bg-surface-container-highest px-6 py-5 rounded-2xl outline-none focus:ring-2 focus:ring-primary"
-          />
-          <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 bg-primary text-white p-3 rounded-xl">
-            {/* Simple Search Icon using SVG */}
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
-        </form>
-      </div>
+              {/* 4. Search Bar Fix: 'max-w-md' prevents it from stretching too far */}
+              <form onSubmit={handleSearch} className="relative w-full max-w-lg group">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="What do you need help with?"
+                  className="w-full bg-surface-container-highest px-6 py-5 rounded-2xl outline-none border-2 border-transparent focus:border-primary transition-all duration-300 shadow-sm group-hover:shadow-md"
+                />
+                <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary text-white p-3 rounded-xl hover:brightness-110 active:scale-95 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </button>
+              </form>
+            </div>
 
-     {/* Right Side: Your Image (fdx.jpg) */}
-<div className="hidden md:block w-full max-w-lg relative">
-  <img 
-    src={fdxImage} 
-    alt="Expert lighting installation" 
-    className="w-full h-[500px] object-cover shadow-2xl transition-all duration-500 hover:scale-[1.02]"
-    style={{
-      borderRadius: "80px 20px 80px 20px" 
-    }}
-  />
-  
-  {/* This adds a nice "Verified" badge to make the UI feel more like a real marketplace */}
-  <div className="absolute -bottom-4 -left-6 bg-white p-3 rounded-xl shadow-lg flex items-center gap-2 border border-slate-100">
-    <span className="bg-green-500 text-white rounded-full p-1 text-[10px]">✓</span>
-    <span className="text-xs font-bold text-slate-800">Vetted Professional</span>
-  </div>
-</div>
-    </div>
-  </div>
-</section>
+            {/* Right Side: Your Image */}
+            <div className="hidden md:block w-full max-w-lg relative">
+              {/* Decorative "Soft" Glow behind the image */}
+              <div className="absolute -inset-4 bg-primary/5 rounded-full blur-3xl opacity-50"></div>
+              
+              <img 
+                src={fdxImage} 
+                alt="Expert lighting installation" 
+                className="relative z-10 w-full h-[550px] object-cover shadow-2xl transition-all duration-700 hover:scale-[1.03]"
+                style={{
+                  borderRadius: "80px 20px 80px 20px" 
+                }}
+              />
+              
+              <div className="absolute -bottom-6 -left-8 z-20 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-100 animate-in slide-in-from-left duration-1000">
+                <div className="bg-green-500 text-white rounded-full p-1.5 shadow-sm">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <div>
+                  <span className="block text-sm font-bold text-slate-800">Vetted Professional</span>
+                  <span className="block text-[10px] text-slate-500 uppercase tracking-tighter">Identity & Background Checked</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
 
       {/* Categories Grid */}
       <section className="py-20 max-w-7xl mx-auto px-6">
