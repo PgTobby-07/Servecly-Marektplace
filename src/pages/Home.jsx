@@ -6,12 +6,20 @@ const Home = () => {
   const [user, setUser] = useState(null);
 
   // 3. This runs automatically when the page loads
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+ useEffect(() => {
+    const checkUser = () => {
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    };
+
+    checkUser();
+    // This adds an extra layer of protection if the storage changes
+    window.addEventListener('storage', checkUser);
+    return () => window.removeEventListener('storage', checkUser);
   }, []);
+  
   const categories = [
     { id: 1, name: "Assembly", icon: "🛠️", count: "1.2k+ Taskers" },
     { id: 2, name: "Mounting", icon: "🖼️", count: "800+ Taskers" },
