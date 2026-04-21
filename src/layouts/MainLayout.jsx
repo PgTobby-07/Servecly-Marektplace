@@ -53,7 +53,14 @@ const MainLayout = ({ children }) => {
             </Link>
           </div>
           {user ? null : (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 ml-auto">
+              <nav>
+            {user ? (
+              <button onClick={Logout}>Logout</button>
+            ) : (
+              <Link to="/login">Login</Link>
+            )}
+          </nav> 
               <Link
                 to="/signup"
                 className="btn-primary text-sm font-semibold shadow-sm"
@@ -62,13 +69,7 @@ const MainLayout = ({ children }) => {
               </Link>
             </div>
           )}
-          <nav>
-            {user ? (
-              <button onClick={Logout}>Logout</button>
-            ) : (
-              <Link to="/login">Login</Link>
-            )}
-          </nav>
+          
         </nav>
       </header>
 
