@@ -10,6 +10,7 @@ const SignUp = () => {
   password: '',
   isTasker: false
 });
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -30,7 +31,7 @@ const SignUp = () => {
     role: formData.isTasker ? "admin" : "users"
   };
 
-  const response = await axios.post("http://127.0.0.1:8000/v1/auth/signup", payload);
+  const response = await axios.post(`${API_URL}/v1/auth/signup`, payload);
   //localStorage.setItem("user", JSON.stringify(response.data));
   localStorage.setItem("user", JSON.stringify({ 
   ...response.data, 

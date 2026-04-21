@@ -4,7 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 const Login = () => {
   const navigate = useNavigate();
  
-
+// This tells React: "Use the URL from the .env file. If you can't find it, use localhost."
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const handleLogin = async (e) => {
   e.preventDefault();
 
@@ -15,7 +16,7 @@ const handleLogin = async (e) => {
 
   try {
     // 2. Call your FastAPI endpoint
-    const response = await fetch('http://localhost:8000/v1/auth/login', {
+    const response = await fetch(`${API_URL}/v1/auth/login`, {      //'http://localhost:8000/v1/auth/login'
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
