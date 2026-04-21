@@ -5,10 +5,9 @@ const MainLayout = ({ children }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // This logic syncs the user state across the entire app
   useEffect(() => {
     const checkUser = () => {
-      const savedUser = localStorage.getItem("user"); // Use localStorage (Consistent with Home)
+      const savedUser = localStorage.getItem("user");
       if (savedUser) {
         setUser(JSON.parse(savedUser));
       } else {
@@ -17,13 +16,12 @@ const MainLayout = ({ children }) => {
     };
 
     checkUser();
-    // Syncs state if user logs in/out in another tab
     window.addEventListener('storage', checkUser);
     return () => window.removeEventListener('storage', checkUser);
   }, []);
 
   const Logout = () => {
-    localStorage.removeItem("user"); // Clear the same storage Home reads from
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     setUser(null); 
     navigate("/login");
@@ -48,24 +46,33 @@ const MainLayout = ({ children }) => {
               <Link to="/" className="hover:text-primary transition-colors">Categories</Link>
               <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
               <Link to="/post-task" className="hover:text-primary transition-colors">Post a Task</Link>
-              {/* MainLayout.jsx - Add inside your nav links list */}
-{user?.role === 'tasker' && user?.status === 'new' && (
-  <Link 
-    to="/profile-setup" 
-    className="flex items-center gap-3 px-4 py-3 rounded-xl text-primary bg-primary/10 font-bold text-sm transition-all hover:bg-primary/20"
-  >
-    <span>✨</span>
-    <span>Complete Setup</span>
-  </Link>
-)}
+              
+              {/* FIXED: Added a general Dashboard link for logged-in users */}
+              {user && (
+                <Link to="/dashboard" className="text-primary font-bold hover:underline">Dashboard</Link>
+              )}
+
+              {/* FIXED: Neatly integrated 'Complete Setup' so it doesn't distort the nav */}
+              {user?.role === 'tasker' && (user?.status === 'new' || !user?.status) && (
+                <Link 
+                  to="/profile-setup" 
+                  className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold animate-pulse"
+                >
+                  ✨ Complete Setup
+                </Link>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-6">
             {user ? (
               <div className="flex items-center gap-4">
+                {/* Admin Quick Link */}
+                {user.role === 'admin' && (
+                  <Link to="/admin/vetting" className="text-xs font-bold text-error border border-error/20 px-2 py-1 rounded">ADMIN PANEL</Link>
+                )}
                 <span className="text-sm font-medium text-on-surface-variant">
-                  {user.role === 'admin' ? "Admin Mode" : `Hi, ${user.name.split(' ')[0]}`}
+                  Hi, {user.name?.split(' ')[0] || 'User'}
                 </span>
                 <button 
                   onClick={Logout}
@@ -91,7 +98,6 @@ const MainLayout = ({ children }) => {
         </nav>
       </header>
 
-      {/* This renders your Home page (or any other page) */}
       <main className="flex-grow">{children}</main>
 
       {/* Footer */}
@@ -105,68 +111,29 @@ const MainLayout = ({ children }) => {
               <span className="text-lg font-display font-bold text-primary">
                 Servecly
               </span>
-              {/* Inside your Navbar links mapping or list */}
-           {user?.role === 'tasker' && user?.status === 'new' && (
-                 <Link 
-    to="/profile-setup" 
-    className="text-sm font-bold text-primary bg-primary/10 px-4 py-2 rounded-lg hover:bg-primary/20 transition-all"
-  >
-    🚀 Complete Setup
-  </Link>
-)}
             </div>
             <p className="text-sm text-on-surface-variant max-w-xs">
-              Built with professional-grade precision for a two-sided service
-              economy.
+              Built with professional-grade precision for a two-sided service economy.
             </p>
           </div>
           <div>
             <h4 className="font-bold text-sm mb-4">Marketplace</h4>
             <ul className="text-sm text-on-surface-variant flex flex-col gap-2">
-              <li>
-                <Link to="/services" className="hover:text-primary">
-                  All Services
-                </Link>
-              </li>
-              <li>
-                <Link to="/post-task" className="hover:text-primary">
-                  How to Post
-                </Link>
-              </li>
-              <li>
-                <Link to="/profile-setup" className="hover:text-primary">
-                  Become a Tasker
-                </Link>
-              </li>
+              <li><Link to="/dashboard" className="hover:text-primary">My Dashboard</Link></li>
+              <li><Link to="/services" className="hover:text-primary">All Services</Link></li>
+              <li><Link to="/profile-setup" className="hover:text-primary">Become a Tasker</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-bold text-sm mb-4">Support</h4>
+            <h4 className="font-bold text-sm mb-4">Admin</h4>
             <ul className="text-sm text-on-surface-variant flex flex-col gap-2">
-              <li>
-                <Link to="/admin/vetting" className="hover:text-primary">
-                  Admin Access
-                </Link>
-              </li>
-              <li>
-                <Link to="/admin/taxonomy" className="hover:text-primary">
-                  Categories
-                </Link>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary">
-                  Help Center
-                </a>
-              </li>
+              <li><Link to="/admin/vetting" className="hover:text-primary">Vetting Pipeline</Link></li>
+              <li><Link to="/admin/taxonomy" className="hover:text-primary">Categories</Link></li>
             </ul>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-outline-variant/5 text-xs text-on-surface-variant flex justify-between">
           <p>© 2026 Servecly Marketplace. All rights reserved.</p>
-          <div className="flex gap-4">
-            <a href="#">Privacy</a>
-            <a href="#">Cookies</a>
-          </div>
         </div>
       </footer>
     </div>
