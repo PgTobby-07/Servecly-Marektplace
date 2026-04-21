@@ -11,7 +11,10 @@ const SignUp = () => {
   isTasker: false
 });
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
+  // 1. Add error state
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -21,32 +24,40 @@ const SignUp = () => {
     });
 };
    const navigate = useNavigate();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  
+  // 1. Add error state
+const [error, setError] = useState("");
+const [loading, setLoading] = useState(false);
 
-   const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
+  setError(""); // Clear old errors
+  setLoading(true);
 
   const payload = {
     name: formData.fullname,
     email: formData.email,
     password: formData.password,
-    role: formData.isTasker ? "tasker" : "users" // Matches your DB exactly
+    role: formData.isTasker ? "tasker" : "users"
   };
 
   try {
     const response = await axios.post(`${API_URL}/v1/auth/signup`, payload);
     
-    // THE CHANGE: Save the object properly
     localStorage.setItem("user", JSON.stringify({ 
-      ...response.data.user, // Data from server (id, token, etc.)
+      ...response.data.user, 
       name: formData.fullname,
       role: payload.role 
     }));
 
     navigate("/home"); 
-  } catch (error) {
-    console.error("Signup failed:", error);
+  } catch (err) {
+    // 2. Capture the specific error message from your backend
+    const message = err.response?.data?.message || "Something went wrong. Please try again.";
+    setError(message); 
+    console.error("Signup failed:", err);
+  } finally {
+    setLoading(false);
   }
 };
   return (
@@ -107,15 +118,50 @@ const SignUp = () => {
             <p className="text-[10px] text-on-surface-variant opacity-60">Must be at least 8 characters.</p>
           </div>
 
-          <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-             <div className="flex items-center gap-3">
-                <input type="checkbox" id="isTasker" name="isTasker"checked={formData.isTasker} onChange={handleChange} className="accent-primary w-4 h-4" />
-                <label htmlFor="isTasker" className="text-sm font-bold text-primary">I want to work as a Tasker</label>
-             </div>
-             <p className="text-[10px] text-on-surface-variant mt-2 pl-7">
-               Select this to go through our vetting pipeline after registration.
-             </p>
-          </div>
+          <div className="flex flex-col gap-3">
+  <label className="text-sm font-bold text-on-surface-variant">Account Type</label>
+  
+  <div className="grid grid-cols-2 gap-4">
+    {/* Customer Option */}
+    <button
+      type="button"
+      onClick={() => setFormData({ ...formData, isTasker: false })}
+      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+        !formData.isTasker 
+          ? "border-primary bg-primary/5 ring-1 ring-primary" 
+          : "border-outline-variant hover:border-primary/50"
+      }`}
+    >
+      <span className="text-2xl">👤</span>
+      <span className={`text-xs font-bold ${!formData.isTasker ? "text-primary" : "text-on-surface-variant"}`}>
+        Hire Help
+      </span>
+    </button>
+
+    {/* Tasker Option */}
+    <button
+      type="button"
+      onClick={() => setFormData({ ...formData, isTasker: true })}
+      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+        formData.isTasker 
+          ? "border-primary bg-primary/5 ring-1 ring-primary" 
+          : "border-outline-variant hover:border-primary/50"
+      }`}
+    >
+      <span className="text-2xl">🛠️</span>
+      <span className={`text-xs font-bold ${formData.isTasker ? "text-primary" : "text-on-surface-variant"}`}>
+        Work as Tasker
+      </span>
+    </button>
+  </div>
+  
+  {/* Dynamic Helper Text */}
+  <p className="text-[10px] text-center text-on-surface-variant opacity-70 italic">
+    {formData.isTasker 
+      ? "You will be redirected to our vetting application." 
+      : "Start posting tasks and getting help today."}
+  </p>
+</div>
 
           <button type="submit" className="btn-primary py-4 text-sm font-bold w-full">
             Get Started
