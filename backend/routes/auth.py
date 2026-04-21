@@ -17,7 +17,7 @@ def create_access_token(data: dict):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-@router.post("/login")
+
 @router.post("/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
     result = db.execute(text("""
