@@ -91,15 +91,23 @@ const Home = () => {
         </form>
       </div>
 
-      {/* Right Side: Your Image (fdx.jpg) */}
-      <div className="hidden md:block w-full max-w-md">
-        <img 
-          src={fdxImage} 
-          alt="Service illustration" 
-          className="rounded-3xl shadow-2xl object-cover w-full h-[450px]"
-        />
-      </div>
-
+     {/* Right Side: Your Image (fdx.jpg) */}
+<div className="hidden md:block w-full max-w-lg relative">
+  <img 
+    src={fdxImage} 
+    alt="Expert lighting installation" 
+    className="w-full h-[500px] object-cover shadow-2xl transition-all duration-500 hover:scale-[1.02]"
+    style={{
+      borderRadius: "80px 20px 80px 20px" 
+    }}
+  />
+  
+  {/* This adds a nice "Verified" badge to make the UI feel more like a real marketplace */}
+  <div className="absolute -bottom-4 -left-6 bg-white p-3 rounded-xl shadow-lg flex items-center gap-2 border border-slate-100">
+    <span className="bg-green-500 text-white rounded-full p-1 text-[10px]">✓</span>
+    <span className="text-xs font-bold text-slate-800">Vetted Professional</span>
+  </div>
+</div>
     </div>
   </div>
 </section>
