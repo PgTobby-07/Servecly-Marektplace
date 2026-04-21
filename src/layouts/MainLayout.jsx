@@ -48,6 +48,16 @@ const MainLayout = ({ children }) => {
               <Link to="/" className="hover:text-primary transition-colors">Categories</Link>
               <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
               <Link to="/post-task" className="hover:text-primary transition-colors">Post a Task</Link>
+              {/* MainLayout.jsx - Add inside your nav links list */}
+{user?.role === 'tasker' && user?.status === 'new' && (
+  <Link 
+    to="/profile-setup" 
+    className="flex items-center gap-3 px-4 py-3 rounded-xl text-primary bg-primary/10 font-bold text-sm transition-all hover:bg-primary/20"
+  >
+    <span>✨</span>
+    <span>Complete Setup</span>
+  </Link>
+)}
             </div>
           </div>
 
