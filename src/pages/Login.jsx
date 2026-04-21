@@ -1,7 +1,46 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
+ 
+
+const handleLogin = async (e) => {
+  e.preventDefault();
+
+  // 1. Grab data from form fields
+  const formData = new FormData(e.currentTarget);
+  const email = formData.get('email');
+  const password = formData.get('password');
+
+  try {
+    // 2. Call your FastAPI endpoint
+    const response = await fetch('http://localhost:8000/v1/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }), // matches your LoginRequest schema
+    });
+
+    const data = await response.json();
+
+    if (response.ok && !data.error) {
+      // 3. Success! Store the token and user info
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // 4. Send them home
+      navigate('/');
+    } else {
+      // 5. Handle the "Invalid credentials" error from your Python code
+      alert(data.error || 'Something went wrong');
+    }
+  } catch (err) {
+    console.error("Connection failed:", err);
+    alert("Could not connect to the server.");
+  }
+};
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-container-low px-6">
       <div className="w-full max-w-md card-tonal bg-white p-10 flex flex-col gap-8">
@@ -16,7 +55,7 @@ const Login = () => {
           <p className="text-on-surface-variant text-sm">Please enter your details</p>
         </div>
 
-        <form className="flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+        <form className="flex flex-col gap-6" onSubmit={handleLogin}>
           <div className="flex flex-col gap-2">
             <label htmlFor="email" className="text-sm font-bold text-on-surface-variant">Email</label>
             <input 
