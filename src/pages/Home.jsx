@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react"; // 1. Added useState and useEffect here
 import { Link } from "react-router-dom";
 
 const Home = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  // 2. This creates a "Live" variable that React watches
+  const [user, setUser] = useState(null);
 
+  // 3. This runs automatically when the page loads
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
   const categories = [
     { id: 1, name: "Assembly", icon: "🛠️", count: "1.2k+ Taskers" },
     { id: 2, name: "Mounting", icon: "🖼️", count: "800+ Taskers" },
