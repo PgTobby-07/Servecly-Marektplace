@@ -34,7 +34,7 @@ const Home = () => {
               </span>
             </h1>
             <p className="text-on-surface-variant text-xl mb-10 leading-relaxed">
-              Connect {user?.name || "today"}with vetted professionals for home
+              Connect {user?.name || "today"} with vetted professionals for home
               repairs, moving, assembly, and more. The architectural standard
               for service marketplaces.
             </p>
