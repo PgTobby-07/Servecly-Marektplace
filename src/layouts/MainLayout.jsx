@@ -58,13 +58,13 @@ const MainLayout = ({ children }) => {
           </div>
           
             <div className="flex items-center gap-4 ml-auto">
-              <nav>
-            {user ? (
+              
+              {user ? (
               <button onClick={Logout}>Logout</button>
             ) : (
               <Link to="/login">Login</Link>
             )}
-          </nav> 
+          
               {user ? null : (
               <Link
                 to="/signup"
