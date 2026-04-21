@@ -54,13 +54,25 @@ const Home = () => {
             {/* Left Side: Text Content */}
             <div className="max-w-2xl w-full"> 
               {user && (
-                <p className="text-lg text-primary font-semibold mb-4 tracking-wide">
-                  {user.role === 'admin' && "System Administrator: "}
-                  {user.role === 'tasker' && "Ready to work, "}
-                  {user.role === 'users' && "Welcome back, "} 
-                  {user.name}
-                </p>
-              )}
+  <div className="flex items-center gap-4 mb-4">
+    <p className="text-lg text-primary font-semibold tracking-wide">
+      {user.role === 'admin' && "System Administrator: "}
+      {user.role === 'tasker' && "Ready to work, "}
+      {user.role === 'users' && "Welcome back, "} 
+      {user.name}
+    </p>
+    
+    {/* NEW: Secret link only for Admins */}
+    {user.role === 'admin' && (
+      <Link 
+        to="/admin/taxonomy" 
+        className="bg-primary/10 text-primary text-xs px-3 py-1 rounded-full font-bold hover:bg-primary/20 transition-all"
+      >
+        Manage Taxonomy →
+      </Link>
+    )}
+  </div>
+)}
 
               {/* 2. Typography Fix: 'tracking-tight' and 'font-bold' for a premium look */}
               <h1 className="text-5xl md:text-7xl text-on-surface mb-6 leading-[1.1] tracking-tight font-bold">
