@@ -24,20 +24,30 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-   const payload = {
+   const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const payload = {
     name: formData.fullname,
     email: formData.email,
     password: formData.password,
-    role: formData.isTasker ? "admin" : "users"
+    role: formData.isTasker ? "tasker" : "users" // Matches your DB exactly
   };
 
-  const response = await axios.post(`${API_URL}/v1/auth/signup`, payload);
-  //localStorage.setItem("user", JSON.stringify(response.data));
-  localStorage.setItem("user", JSON.stringify({ 
-  ...response.data, 
-  name: formData.fullname 
-}));
-  navigate("/home"); 
+  try {
+    const response = await axios.post(`${API_URL}/v1/auth/signup`, payload);
+    
+    // THE CHANGE: Save the object properly
+    localStorage.setItem("user", JSON.stringify({ 
+      ...response.data.user, // Data from server (id, token, etc.)
+      name: formData.fullname,
+      role: payload.role 
+    }));
+
+    navigate("/home"); 
+  } catch (error) {
+    console.error("Signup failed:", error);
+  }
 };
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-container-low px-6 py-12">
