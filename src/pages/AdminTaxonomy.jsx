@@ -7,7 +7,7 @@ const AdminTaxonomy = () => {
   const [loading, setLoading] = useState(true);
 
   // Reverted to your preferred production-first URL
-  const API_URL = import.meta.env.VITE_API_URL || 'https://servecly-api.onrender.com';
+ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
     const fetchCategories = async () => {
