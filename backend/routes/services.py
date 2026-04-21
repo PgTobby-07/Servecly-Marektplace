@@ -17,3 +17,16 @@ def get_categories(db: Session = Depends(get_db)):
     """)).fetchall()
 
     return [dict(row._mapping) for row in result]
+
+@router.get("/search")
+def search_services(q: str, db: Session = Depends(get_db)):
+    # The % symbols allow it to find partial matches (e.g., "clean" finds "Cleaning")
+    search_query = f"%{q}%"
+    
+    results = db.execute(text("""
+        SELECT service_id, title, description, price 
+        FROM services 
+        WHERE title LIKE :q OR description LIKE :q
+    """), {"q": search_query}).fetchall()
+    
+    return [dict(row) for row in results]
