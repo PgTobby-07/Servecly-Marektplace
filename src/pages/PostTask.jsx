@@ -35,12 +35,14 @@ const PostTask = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Step 2: logic: Prepare payload to match your 'Task' table columns
     try {
       const token = localStorage.getItem("token");
+      // change: Get the user object from storage
+      const user = JSON.parse(localStorage.getItem("user"));
+
       const response = await fetch(`${API_URL}/v1/tasks`, {
         method: 'POST',
         headers: { 
@@ -49,17 +51,21 @@ const PostTask = () => {
         },
         body: JSON.stringify({
           ...formData,
-          // logic: In your schema, client_id is required
-          // Assuming user ID is stored in localStorage after login
-          client_id: JSON.parse(localStorage.getItem("user")).user_id 
+          // change: Use 'user.id' because that's the key in your storage
+          client_id: user.id 
         }),
       });
 
       if (response.ok) {
         alert("Task posted successfully!");
+        // Logic: Clear title and description after success
+        setFormData({ ...formData, title: '', description: '', budget: '' });
+      } else {
+        const error = await response.json();
+        alert(`Failed: ${error.detail || "Check your database connection"}`);
       }
     } catch (err) {
-      alert("Submission failed. Check your connection.");
+      alert("Submission failed. Ensure your Render backend is running.");
     }
   };
 
