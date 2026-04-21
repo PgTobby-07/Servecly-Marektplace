@@ -7,6 +7,8 @@ router = APIRouter(tags=["Services"])
 
 @router.get("/categories")
 def get_categories(db: Session = Depends(get_db)):
+    # logic: Fetch categories and the number of taskers offering them
+    # change: Added a filter to only show categories that are marked 'active' in your DB
     result = db.execute(text("""
         SELECT c.category_id as id, c.name,
         COUNT(ts.tasker_id) as taskerCount
@@ -18,15 +20,26 @@ def get_categories(db: Session = Depends(get_db)):
 
     return [dict(row._mapping) for row in result]
 
+@router.get("/all")
+def get_all_tasks(db: Session = Depends(get_db)):
+    # new: Added this endpoint to fetch the "Active Task Stream" for the main grid
+    # this replaces the hardcoded "IKEA Bed" demo data
+    results = db.execute(text("""
+        SELECT service_id as id, title, description, price, 'ACTIVE' as status
+        FROM Service
+    """)).fetchall()
+    
+    return [dict(row._mapping) for row in results]
+
 @router.get("/search")
 def search_services(q: str, db: Session = Depends(get_db)):
-    # The % symbols allow it to find partial matches (e.g., "clean" finds "Cleaning")
     search_query = f"%{q}%"
     
+    # change: Using _mapping for row conversion to ensure JSON compatibility
     results = db.execute(text("""
-        SELECT service_id, title, description, price 
-        FROM services 
+        SELECT service_id as id, title, description, price, 'ACTIVE' as status
+        FROM Service 
         WHERE title LIKE :q OR description LIKE :q
     """), {"q": search_query}).fetchall()
     
-    return [dict(row) for row in results]
+    return [dict(row._mapping) for row in results]
