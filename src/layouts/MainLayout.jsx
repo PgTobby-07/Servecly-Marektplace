@@ -1,8 +1,4 @@
-I've updated the `MainLayout` to transition away from the light "Material Design" look and toward the **deep cinematic navy and slate** of the home page. This ensures that when a user moves from the landing page to the services list or dashboard, the visual identity feels like a single, unified "System Core".
 
-### Unified `MainLayout.jsx`
-
-```javascript
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -172,4 +168,4 @@ const MainLayout = ({ children }) => {
 };
 
 export default MainLayout;
-```
+
