@@ -37,21 +37,24 @@ const PostTask = () => {
 
  const handleSubmit = async (e) => {
   e.preventDefault();
+  
   try {
     const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user"));
 
-    // logic: We MUST match the Pydantic model names exactly
     const payload = {
-  categoryId: parseInt(formData.category_id),
-  title: formData.title,
-  description: formData.description,
-  location: formData.location,
-  budget: parseFloat(formData.budget),
-  client_id: user.id, // logic: Matches your localStorage 'id'
-  service_id: 1, 
-  scheduled_time: formData.scheduled_time // change: Send the date to the backend
-};
+      categoryId: parseInt(formData.category_id),
+      title: formData.title,
+      description: formData.description,
+      location: formData.location,
+      budget: parseFloat(formData.budget),
+      client_id: user.id, // logic: Matches the 'id' key in your storage
+      service_id: 1,      // logic: Required by your Pydantic model
+      
+      // change: This was missing and caused the "Field required" error
+      scheduled_time: formData.scheduled_time 
+    };
+
     const response = await fetch(`${API_URL}/v1/tasks`, {
       method: 'POST',
       headers: { 
@@ -63,18 +66,15 @@ const PostTask = () => {
 
     if (response.ok) {
       alert("Task posted successfully!");
-      // logic: Refresh the page or clear the form to see the update
-      window.location.reload(); 
+      window.location.href = "/services"; // logic: Redirect to see the live task
     } else {
       const errorData = await response.json();
-      // change: This will now show the specific field that failed
       alert(`Validation Error: ${JSON.stringify(errorData.detail)}`);
     }
   } catch (err) {
     alert("Connection error. Check your backend status.");
   }
 };
-
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-12">
