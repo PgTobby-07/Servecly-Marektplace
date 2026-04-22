@@ -69,30 +69,42 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
 
 @router.post("/signup", status_code=201)
 def signup(data: SignupRequest, db: Session = Depends(get_db)):
-    name_parts = data.name.split(" ", 1)
-    first = name_parts[0]
-    last = name_parts[1] if len(name_parts) > 1 else ""
-    
-    role = db.execute(text("""
-        SELECT role_id FROM roles WHERE role_name = :role
-    """), {"role": data.role}).fetchone()
+    try:
+        name_parts = data.name.split(" ", 1)
+        first, last = name_parts[0], (name_parts[1] if len(name_parts) > 1 else "")
 
-    db.execute(text("""
-        INSERT INTO users (first_name, last_name, email, password_hash, role_id)
-        VALUES (:first, :last, :email, :password, :role_id)
-    """), {
-        "first": first,
-        "last": last,
-        "email": data.email,
-        "password": data.password,
-        "role_id": role[0]
-    })
+        # 1. Map role (1: Admin, 2: User, 3: Tasker)
+        role_map = {"admin": 1, "user": 2, "tasker": 3}
+        role_id = role_map.get(data.role.lower(), 2)
 
-    db.commit()
+        # 2. Insert into central 'users' table
+        db.execute(text("""
+            INSERT INTO users (first_name, last_name, email, password_hash, role_id)
+            VALUES (:first, :last, :email, :password, :role_id)
+        """), {
+            "first": first, "last": last, "email": data.email, 
+            "password": data.password, "role_id": role_id
+        })
+        
+        user_id = db.execute(text("SELECT LAST_INSERT_ID()")).scalar()
 
-    user_id = db.execute(text("SELECT LAST_INSERT_ID()")).scalar()
+        # 🔥 THE PRIVILEGE LOCK: Only 'User' role gets a client profile
+        if role_id == 2:
+            db.execute(text("""
+                INSERT INTO client (client_id, name, email)
+                VALUES (:id, :name, :email)
+            """), {"id": user_id, "name": data.name, "email": data.email})
 
-    return {
-        "message": "User registered successfully",
-        "userId": user_id
-    }
+        # 3. Taskers get their specific profile
+        elif role_id == 3:
+            db.execute(text("""
+                INSERT INTO tasker (tasker_id, name, email)
+                VALUES (:id, :name, :email)
+            """), {"id": user_id, "name": data.name, "email": data.email})
+
+        db.commit()
+        return {"message": "Account created successfully", "userId": user_id}
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
