@@ -199,7 +199,7 @@ const PostTask = () => {
                 Sign Up as "Hire Help" to Post
               </Link>
             </div>
-          ) : user.role === 'user' ? (
+          ) : user.role === 'users' ? (
             // State 2: Logged in as User - Show Active Button
             <button type="submit" className="btn-primary py-4 px-12 text-sm font-bold shadow-xl shadow-primary/20 bg-primary text-white rounded-xl">
               Post Task to Marketplace
