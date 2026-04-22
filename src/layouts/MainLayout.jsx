@@ -45,8 +45,10 @@ const MainLayout = ({ children }) => {
             <div className="hidden md:flex items-center gap-8 text-sm font-medium text-on-surface-variant">
               <Link to="/" className="hover:text-primary transition-colors">Categories</Link>
               <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
+              {/* logic: Show for Guests (no user) OR Clients (role 'user') */}
+             {(!user || user.role === 'user') && (
               <Link to="/post-task" className="hover:text-primary transition-colors">Post a Task</Link>
-              
+              )}
               {/* FIXED: Added a general Dashboard link for logged-in users */}
               {user && (
                 <Link to="/dashboard" className="text-primary font-bold hover:underline">Dashboard</Link>
