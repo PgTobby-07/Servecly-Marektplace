@@ -67,64 +67,51 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     }
 
 
-
 @router.post("/signup", status_code=201)
 def signup(data: SignupRequest, db: Session = Depends(get_db)):
     try:
-        # 1. Prepare name parts for the database
+        # 1. Standard name and role logic
         name_parts = data.name.split(" ", 1)
         first = name_parts[0]
         last = name_parts[1] if len(name_parts) > 1 else ""
         
-        # 2. Find the Role ID based on the string sent from frontend ('users' or 'taskers')
-        # logic: Fetching the role row to ensure we have a valid role_id
-        role_result = db.execute(text("SELECT role_id FROM roles WHERE role_name = :role"), 
-                                 {"role": data.role}).fetchone()
+        role = db.execute(text("SELECT role_id FROM roles WHERE role_name = :role"), 
+                          {"role": data.role}).fetchone()
         
-        if not role_result:
-            return {"error": f"Role '{data.role}' not found in database"}
+        if not role:
+            return {"error": "Invalid role"}
 
-        # 3. Create the entry in the 'users' table
-        # change: We include 'is_active' to match your database schema
+        # 2. Insert into main users table
         db.execute(text("""
-            INSERT INTO users (first_name, last_name, email, password_hash, role_id, is_active)
-            VALUES (:first, :last, :email, :password, :role_id, 1)
+            INSERT INTO users (first_name, last_name, email, password_hash, role_id)
+            VALUES (:first, :last, :email, :password, :role_id)
         """), {
             "first": first, "last": last, "email": data.email,
-            "password": data.password, "role_id": role_result[0]
+            "password": data.password, "role_id": role[0]
         })
 
-        # 4. Get the ID of the user we just inserted
-        # logic: This ID is required to link the client/tasker table
+        # 3. Get the new user_id
         user_id = db.execute(text("SELECT LAST_INSERT_ID()")).scalar()
 
-        # 5. Create the profile in the specific table (client or tasker)
-        # logic: Using .lower() and .strip() to handle 'users' vs 'user'
+        # 4. 🔥 MATCHING THE SCHEMAS
         role_name_clean = data.role.lower().strip()
         
         if role_name_clean in ["user", "users"]:
-            db.execute(text("""
-                INSERT INTO client (client_id, name, email)
-                VALUES (:id, :name, :email)
-            """), {"id": user_id, "name": data.name, "email": data.email})
+            # Client only has one column: client_id
+            db.execute(text("INSERT INTO client (client_id) VALUES (:id)"), {"id": user_id})
 
         elif role_name_clean in ["tasker", "taskers"]:
-            db.execute(text("""
-                INSERT INTO tasker (tasker_id, name, email)
-                VALUES (:id, :name, :email)
-            """), {"id": user_id, "name": data.name, "email": data.email})
+            # Tasker has multiple columns, but we only insert the ID for now.
+            # Bio, hourly_rate, and background_check stay NULL until they edit profile.
+            db.execute(text("INSERT INTO tasker (tasker_id) VALUES (:id)"), {"id": user_id})
 
-        # 6. 🔥 THE MOST IMPORTANT STEP: Commit the transaction
-        # This makes the user permanent. Without this, the database rolls back on error.
+        # 5. Commit the transaction
         db.commit()
 
-        return {
-            "message": "User registered successfully",
-            "userId": user_id
-        }
+        return {"message": "User registered successfully", "userId": user_id}
 
     except Exception as e:
-        # logic: If ANY of the above fails, undo everything so we don't have broken data
-        db.rollback() 
-        print(f"Signup Error: {str(e)}") 
+        db.rollback()
+        print(f"Signup Error: {str(e)}")
         return {"error": "Internal Server Error", "details": str(e)}
+
