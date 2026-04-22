@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+// change: Added Link import for the guest redirection
+import { Link } from 'react-router-dom'; 
 
 const PostTask = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  // change: Added state to track the logged-in user and their role
+  const [user, setUser] = useState(null); 
   const [formData, setFormData] = useState({
     title: '',
     category_id: '',
@@ -14,8 +18,14 @@ const PostTask = () => {
 
   const API_URL = import.meta.env.VITE_API_URL || 'https://servecly-api.onrender.com';
 
-  // Step 1: Fetch REAL categories from your DB to replace the hardcoded list
+  // change: Combined user check and category fetch into one effect
   useEffect(() => {
+    // change: Logic to check user status from localStorage on component mount
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      setUser(JSON.parse(userString));
+    }
+
     const fetchCategories = async () => {
       try {
         const response = await fetch(`${API_URL}/v1/services/categories`);
@@ -35,56 +45,50 @@ const PostTask = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  try {
-    const token = localStorage.getItem("token");
-    const userString = localStorage.getItem("user");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     
-    if (!userString) {
-      alert("Please log in again.");
+    // change: Security check - ensure only 'user' role can even trigger the fetch
+    if (!user || user.role !== 'user') {
+      alert("Only 'Hire Help' accounts can post tasks.");
       return;
     }
     
-    const user = JSON.parse(userString);
+    try {
+      const token = localStorage.getItem("token");
 
-    const payload = {
-      // logic: Match the Pydantic 'categoryId' while sending the integer ID
-      categoryId: parseInt(formData.category_id), 
-      title: formData.title,
-      description: formData.description,
-      location: formData.location,
-      // logic: Convert string to float for the DECIMAL(10,2) column
-      budget: parseFloat(formData.budget),
-      client_id: parseInt(user.id), 
-      service_id: 1, // Ensure this ID exists in your Service table
-      scheduled_time: formData.scheduled_time 
-    };
+      const payload = {
+        categoryId: parseInt(formData.category_id), 
+        title: formData.title,
+        description: formData.description,
+        location: formData.location,
+        budget: parseFloat(formData.budget),
+        client_id: parseInt(user.id), 
+        service_id: 1, 
+        scheduled_time: formData.scheduled_time 
+      };
 
-    console.log("Sending Payload:", payload); // Debug: Check this in your browser console
+      const response = await fetch(`${API_URL}/v1/tasks`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(payload),
+      });
 
-    const response = await fetch(`${API_URL}/v1/tasks`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` 
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (response.ok) {
-      alert("Task posted successfully!");
-      window.location.href = "/services";
-    } else {
-      const errorData = await response.json();
-      // change: This now properly displays the specific backend validation error
-      alert(`Validation Error: ${JSON.stringify(errorData.detail)}`);
+      if (response.ok) {
+        alert("Task posted successfully!");
+        window.location.href = "/services";
+      } else {
+        const errorData = await response.json();
+        alert(`Validation Error: ${JSON.stringify(errorData.detail)}`);
+      }
+    } catch (err) {
+      alert("Connection error. Check your backend status.");
     }
-  } catch (err) {
-    alert("Connection error. Check your backend status.");
-  }
-};
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-12">
@@ -118,7 +122,6 @@ const PostTask = () => {
                 onChange={handleChange}
                 className="w-full bg-surface-container-low px-4 py-4 rounded-xl outline-none"
               >
-                {/* change: Mapping real DB categories instead of hardcoded strings */}
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
@@ -184,9 +187,29 @@ const PostTask = () => {
         </div>
 
         <div className="pt-8 border-t border-outline-variant/10 flex justify-end">
-           <button type="submit" className="btn-primary py-4 px-12 text-sm font-bold shadow-xl shadow-primary/20">
-             Post Task to Marketplace
-           </button>
+          {/* change: Added the conditional Submit area logic */}
+          {!user ? (
+            // State 1: Guest User - Show CTA to Sign Up
+            <div className="flex flex-col items-end gap-2">
+              <p className="text-on-surface-variant text-sm">Need to post this task?</p>
+              <Link 
+                to="/signup?role=user" 
+                className="btn-primary py-4 px-12 text-sm font-bold shadow-xl shadow-primary/20 bg-primary text-white rounded-xl"
+              >
+                Sign Up as "Hire Help" to Post
+              </Link>
+            </div>
+          ) : user.role === 'user' ? (
+            // State 2: Logged in as User - Show Active Button
+            <button type="submit" className="btn-primary py-4 px-12 text-sm font-bold shadow-xl shadow-primary/20 bg-primary text-white rounded-xl">
+              Post Task to Marketplace
+            </button>
+          ) : (
+            // State 3: Logged in as Admin/Tasker - Show Restriction
+            <div className="text-error bg-error/10 p-4 rounded-xl text-sm font-medium">
+              Only 'Hire Help' accounts are permitted to post tasks.
+            </div>
+          )}
         </div>
       </form>
     </div>
