@@ -1,8 +1,4 @@
-I've repositioned the **System Core** badge to the top left as the primary anchor, replacing the previous logo placeholder. I've also added several new high-density sections to extend the scroll, including a deep dive into **Mr. R.A.’s** vision at **Istinye University** and the broader impact of Servecly on the professional landscape.
 
-### The Extended Cinematic `Home.jsx`
-
-```javascript
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import fdxImage from "../assets/fdx.png";
