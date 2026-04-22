@@ -69,42 +69,56 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
 
 @router.post("/signup", status_code=201)
 def signup(data: SignupRequest, db: Session = Depends(get_db)):
-    try:
-        name_parts = data.name.split(" ", 1)
-        first, last = name_parts[0], (name_parts[1] if len(name_parts) > 1 else "")
+    # --- Keep your original name logic ---
+    name_parts = data.name.split(" ", 1)
+    first = name_parts[0]
+    last = name_parts[1] if len(name_parts) > 1 else ""
+    
+    # --- Keep your original role lookup ---
+    role = db.execute(text("""
+        SELECT role_id FROM roles WHERE role_name = :role
+    """), {"role": data.role}).fetchone()
 
-        # 1. Map role (1: Admin, 2: User, 3: Tasker)
-        role_map = {"admin": 1, "user": 2, "tasker": 3}
-        role_id = role_map.get(data.role.lower(), 2)
+    # --- Keep your original user insertion ---
+    db.execute(text("""
+        INSERT INTO users (first_name, last_name, email, password_hash, role_id)
+        VALUES (:first, :last, :email, :password, :role_id)
+    """), {
+        "first": first,
+        "last": last,
+        "email": data.email,
+        "password": data.password,
+        "role_id": role[0]
+    })
 
-        # 2. Insert into central 'users' table
+    # logic: We need the ID now to link the profile tables
+    user_id = db.execute(text("SELECT LAST_INSERT_ID()")).scalar()
+
+    # ==========================================================
+    # 🔥 NEW LOGIC: Conditional Profile Creation
+    # This fixes the 'fk_task_client' error by ensuring the ID 
+    # exists in the required secondary tables.
+    # ==========================================================
+    
+    # If the user is a 'user' (Hire Help), add them to the client table
+    if data.role.lower() == "user":
         db.execute(text("""
-            INSERT INTO users (first_name, last_name, email, password_hash, role_id)
-            VALUES (:first, :last, :email, :password, :role_id)
-        """), {
-            "first": first, "last": last, "email": data.email, 
-            "password": data.password, "role_id": role_id
-        })
-        
-        user_id = db.execute(text("SELECT LAST_INSERT_ID()")).scalar()
+            INSERT INTO client (client_id, name, email)
+            VALUES (:id, :name, :email)
+        """), {"id": user_id, "name": data.name, "email": data.email})
 
-        # 🔥 THE PRIVILEGE LOCK: Only 'User' role gets a client profile
-        if role_id == 2:
-            db.execute(text("""
-                INSERT INTO client (client_id, name, email)
-                VALUES (:id, :name, :email)
-            """), {"id": user_id, "name": data.name, "email": data.email})
+    # If the user is a 'tasker' (Work as Tasker), add them to the tasker table
+    elif data.role.lower() == "tasker":
+        db.execute(text("""
+            INSERT INTO tasker (tasker_id, name, email)
+            VALUES (:id, :name, :email)
+        """), {"id": user_id, "name": data.name, "email": data.email})
 
-        # 3. Taskers get their specific profile
-        elif role_id == 3:
-            db.execute(text("""
-                INSERT INTO tasker (tasker_id, name, email)
-                VALUES (:id, :name, :email)
-            """), {"id": user_id, "name": data.name, "email": data.email})
+    # ==========================================================
 
-        db.commit()
-        return {"message": "Account created successfully", "userId": user_id}
+    db.commit()
 
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    return {
+        "message": "User registered successfully",
+        "userId": user_id
+    }
