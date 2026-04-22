@@ -36,39 +36,44 @@ const PostTask = () => {
   };
 
  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    try {
-      const token = localStorage.getItem("token");
-      // change: Get the user object from storage
-      const user = JSON.parse(localStorage.getItem("user"));
+  e.preventDefault();
+  try {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
 
-      const response = await fetch(`${API_URL}/v1/tasks`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify({
-          ...formData,
-          // change: Use 'user.id' because that's the key in your storage
-          client_id: user.id 
-        }),
-      });
+    // logic: We MUST match the Pydantic model names exactly
+    const payload = {
+      categoryId: parseInt(formData.category_id), // change: matches 'categoryId' in main.py
+      title: formData.title,
+      description: formData.description,
+      location: formData.location,
+      budget: parseFloat(formData.budget),
+      client_id: user.id, // matches 'client_id' in main.py
+      service_id: 1 // temp: Set to 1 for now so the backend doesn't reject it
+    };
 
-      if (response.ok) {
-        alert("Task posted successfully!");
-        // Logic: Clear title and description after success
-        setFormData({ ...formData, title: '', description: '', budget: '' });
-      } else {
-          const errorData = await response.json();
-  // logic: This stringifies the error so you can see which field (e.g., 'budget' or 'client_id') failed validation
-         alert(`Failed: ${JSON.stringify(errorData.detail)}`); 
-}
-    } catch (err) {
-      alert("Submission failed. Ensure your Render backend is running.");
+    const response = await fetch(`${API_URL}/v1/tasks`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      alert("Task posted successfully!");
+      // logic: Refresh the page or clear the form to see the update
+      window.location.reload(); 
+    } else {
+      const errorData = await response.json();
+      // change: This will now show the specific field that failed
+      alert(`Validation Error: ${JSON.stringify(errorData.detail)}`);
     }
-  };
+  } catch (err) {
+    alert("Connection error. Check your backend status.");
+  }
+};
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
