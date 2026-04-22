@@ -28,32 +28,39 @@ const MainLayout = ({ children }) => {
   };
 
   return (
-    // Deep background with brightened slate text for scannability
-    <div className="min-h-screen flex flex-col bg-[#01040a] text-slate-100 font-sans selection:bg-[#0d6b78]">
-      
-      {/* 1. HIGH-CONTRAST HEADER */}
-      <header className="sticky top-0 z-50 bg-[#01040a]/95 backdrop-blur-md border-b border-white/10">
+    <div className="min-h-screen flex flex-col bg-surface font-sans selection:bg-primary-fixed selection:text-on-primary-fixed">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-outline-variant/15">
         <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-12">
-            
-            {/* RESTORED OG LOGO WITH VIBRANT TEAL */}
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 bg-[#0d6b78] rounded flex items-center justify-center text-white font-bold text-lg shadow-[0_0_15px_rgba(13,107,120,0.3)]">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-container rounded-lg flex items-center justify-center text-white font-bold">
                 S
               </div>
-              <span className="text-xl font-bold tracking-tight text-[#0f8a9a] group-hover:text-cyan-400 transition-colors">
+              <span className="text-xl font-display font-bold tracking-tight text-primary">
                 Servecly
               </span>
             </Link>
 
-            {/* BRIGHTENED NAV LINKS */}
-            <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-300">
-              <Link to="/" className="hover:text-white transition-colors">Categories</Link>
-              <Link to="/services" className="hover:text-white transition-colors">Find Help</Link>
-              
+            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-on-surface-variant">
+              <Link to="/" className="hover:text-primary transition-colors">Categories</Link>
+              <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
+              {/* logic: Show for Guests (no user) OR Clients (role 'user') */}
+             {(!user || user.role === 'users') && (
+              <Link to="/post-task" className="hover:text-primary transition-colors">Post a Task</Link>
+              )}
+              {/* FIXED: Added a general Dashboard link for logged-in users */}
               {user && (
-                <Link to="/dashboard" className="text-cyan-400 font-bold hover:text-white transition-colors underline decoration-2 underline-offset-8">
-                  Dashboard
+                <Link to="/dashboard" className="text-primary font-bold hover:underline">Dashboard</Link>
+              )}
+
+              {/* FIXED: Neatly integrated 'Complete Setup' so it doesn't distract the nav */}
+              {user?.role === 'tasker' && (user?.status === 'new' || !user?.status) && (
+                <Link 
+                  to="/profile-setup" 
+                  className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold animate-pulse"
+                >
+                  ✨ Complete Setup
                 </Link>
               )}
             </div>
@@ -61,27 +68,29 @@ const MainLayout = ({ children }) => {
 
           <div className="flex items-center gap-6">
             {user ? (
-              <div className="flex items-center gap-6">
-                {/* CLEAN USER GREETING - BRIGHT WHITE FOR NAME */}
-                <span className="text-sm font-medium text-slate-300">
-                  Hi, <span className="text-white font-black">{user.name?.split(' ')[0] || 'User'}</span>
+              <div className="flex items-center gap-4">
+                {/* Admin Quick Link */}
+                {user.role === 'admin' && (
+                  <Link to="/admin/vetting" className="text-xs font-bold text-error border border-error/20 px-2 py-1 rounded">ADMIN PANEL</Link>
+                )}
+                <span className="text-sm font-medium text-on-surface-variant">
+                  Hi, {user.name?.split(' ')[0] || 'User'}
                 </span>
-                
                 <button 
                   onClick={Logout}
-                  className="text-xs font-black uppercase tracking-widest text-[#0f8a9a] hover:text-rose-400 transition-colors"
+                  className="text-sm font-semibold text-primary hover:text-primary-dim transition-colors"
                 >
                   Logout
                 </button>
               </div>
             ) : (
               <div className="flex items-center gap-4">
-                <Link to="/login" className="text-sm font-semibold text-slate-300 hover:text-white">
+                <Link to="/login" className="text-sm font-medium text-on-surface-variant hover:text-primary">
                   Login
                 </Link>
                 <Link
                   to="/signup"
-                  className="bg-[#0d6b78] text-white px-5 py-2 rounded-lg text-sm font-bold shadow-[0_4px_14px_rgba(13,107,120,0.4)] hover:bg-[#0f8a9a] hover:scale-105 transition-all"
+                  className="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm hover:bg-primary/90 transition-all"
                 >
                   Sign Up
                 </Link>
@@ -91,39 +100,42 @@ const MainLayout = ({ children }) => {
         </nav>
       </header>
 
-      {/* MAIN CONTENT AREA */}
       <main className="flex-grow">{children}</main>
 
-      {/* 2. BRIGHTENED FOOTER */}
-      <footer className="bg-[#01040a] border-t border-white/5 py-16 mt-auto">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+      {/* Footer */}
+      <footer className="bg-surface-container-low border-t border-outline-variant/15 py-12 mt-12">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-[#0d6b78] rounded flex items-center justify-center text-white text-[10px] font-bold">
+              <div className="w-6 h-6 bg-primary rounded flex items-center justify-center text-white text-xs font-bold">
                 S
               </div>
-              <span className="text-lg font-bold text-[#0f8a9a]">
+              <span className="text-lg font-display font-bold text-primary">
                 Servecly
               </span>
             </div>
-            <p className="text-sm text-slate-400 max-w-xs leading-relaxed font-medium">
+            <p className="text-sm text-on-surface-variant max-w-xs">
               Built with professional-grade precision for a two-sided service economy.
             </p>
           </div>
-          
           <div>
-            <h4 className="font-black text-xs text-white uppercase tracking-widest mb-6">Marketplace</h4>
-            <ul className="text-sm text-slate-400 flex flex-col gap-3 font-semibold">
-              <li><Link to="/dashboard" className="hover:text-white transition-colors">My Dashboard</Link></li>
-              <li><Link to="/services" className="hover:text-white transition-colors">All Services</Link></li>
-              <li><Link to="/profile-setup" className="hover:text-white transition-colors">Become a Tasker</Link></li>
+            <h4 className="font-bold text-sm mb-4">Marketplace</h4>
+            <ul className="text-sm text-on-surface-variant flex flex-col gap-2">
+              <li><Link to="/dashboard" className="hover:text-primary">My Dashboard</Link></li>
+              <li><Link to="/services" className="hover:text-primary">All Services</Link></li>
+              <li><Link to="/profile-setup" className="hover:text-primary">Become a Tasker</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold text-sm mb-4">Admin</h4>
+            <ul className="text-sm text-on-surface-variant flex flex-col gap-2">
+              <li><Link to="/admin/vetting" className="hover:text-primary">Vetting Pipeline</Link></li>
+              <li><Link to="/admin/taxonomy" className="hover:text-primary">Categories</Link></li>
             </ul>
           </div>
         </div>
-        
-        <div className="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/5 text-[10px] font-black text-slate-500 flex justify-between uppercase tracking-[0.2em]">
+        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-outline-variant/5 text-xs text-on-surface-variant flex justify-between">
           <p>© 2026 Servecly Marketplace. All rights reserved.</p>
-          <p className="text-slate-600">Architectural Precision</p>
         </div>
       </footer>
     </div>
