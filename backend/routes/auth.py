@@ -108,8 +108,20 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
         # 5. Commit the transaction
         db.commit()
 
-        return {"message": "User registered successfully", "userId": user_id}
+        # 5. Commit the transaction
+        db.commit()
 
+        # 🔥 FIX: Return the same object structure as login
+        # This ensures the frontend doesn't get 'null' for the role or name
+        return {
+            "message": "User registered successfully",
+            "token": create_access_token(data={"sub": str(user_id)}),
+            "user": {
+                "id": user_id,
+                "name": data.name,
+                "role": data.role  # This will be 'user' or 'tasker' as sent by frontend
+            }
+        }
     except Exception as e:
         db.rollback()
         print(f"Signup Error: {str(e)}")
