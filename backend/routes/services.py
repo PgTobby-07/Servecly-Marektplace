@@ -7,28 +7,31 @@ router = APIRouter(tags=["Services"])
 
 @router.get("/categories")
 def get_categories(db: Session = Depends(get_db)):
-    # This matches your Category and TaskerService tables
+    # CHANGE: Switched count from taskers to service_id so sidebar numbers reflect 
+    # the services we just added (e.g., [1] for Shelving)
     result = db.execute(text("""
         SELECT c.category_id as id, c.name,
-        COUNT(ts.tasker_id) as taskerCount
+        COUNT(s.service_id) as taskerCount
         FROM Category c
         LEFT JOIN Service s ON c.category_id = s.category_id
-        LEFT JOIN TaskerService ts ON s.service_id = ts.service_id
         GROUP BY c.category_id, c.name
+        ORDER BY c.name ASC
     """)).fetchall()
 
     return [dict(row._mapping) for row in result]
 
 @router.get("/search")
-def search_services(q: str, db: Session = Depends(get_db)):
+def search_services(q: str = "", db: Session = Depends(get_db)):
     search_query = f"%{q}%"
     
-    # Matching your Service table columns: service_id, title, description, base_price
+    # CHANGE: Added a JOIN with Category table to retrieve 'category_name' for the TaskCard
     results = db.execute(text("""
-        SELECT service_id as id, title, description, base_price as price
-        FROM Service 
-        WHERE (title LIKE :q OR description LIKE :q)
-        AND is_active = 1
+        SELECT s.service_id as id, s.title, s.description, 
+               s.base_price as price, c.name as category_name
+        FROM Service s
+        JOIN Category c ON s.category_id = c.category_id
+        WHERE (s.title LIKE :q OR s.description LIKE :q)
+        AND s.is_active = 1
     """), {"q": search_query}).fetchall()
     
     return [dict(row._mapping) for row in results]
