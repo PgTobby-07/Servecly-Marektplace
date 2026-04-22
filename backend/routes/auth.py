@@ -1,129 +1,60 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from sqlalchemy import text
-from config.database import get_db
-from models.auth_models import LoginRequest, SignupRequest
-from jose import jwt
-from datetime import datetime, timedelta
-
-router = APIRouter(tags=["Authentication"])
-
-# =========================
-# 🔐 AUTH CONFIG
-# =========================
-SECRET_KEY = "praise_god_tobby_secret_key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
-
-
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-
-# ==========================================================
-# 🔥 FIX #1: Removed duplicate @router.post("/login")
-# ==========================================================
-@router.post("/login")
-def login(data: LoginRequest, db: Session = Depends(get_db)):
-
-    # ==========================================================
-    # 🔥 FIX #2: DO NOT check password in SQL query (INSECURE)
-    #      → only fetch user by email first
-    # ==========================================================
-    result = db.execute(text("""
-        SELECT u.user_id, u.first_name, u.last_name, u.password_hash, r.role_name
-        FROM users u
-        JOIN roles r ON u.role_id = r.role_id
-        WHERE u.email = :email
-    """), {"email": data.email}).fetchone()
-
-    # ==========================================================
-    # 🔥 FIX #3: Proper authentication check
-    # ==========================================================
-    if not result:
-        return {"error": "Invalid credentials"}
-
-    stored_password = result[3]
-
-    # NOTE: Replace this with bcrypt in production
-    if data.password != stored_password:
-        return {"error": "Invalid credentials"}
-
-    # ==========================================================
-    # Token creation (unchanged)
-    # ==========================================================
-    access_token = create_access_token(data={"sub": str(result[0])})
-
-    return {
-        "token": access_token,
-        "user": {
-            "id": result[0],
-            "name": result[1] + " " + result[2],
-            "role": result[4]
-        }
-    }
-
-
 @router.post("/signup", status_code=201)
 def signup(data: SignupRequest, db: Session = Depends(get_db)):
-    # --- Keep your original name logic ---
-    name_parts = data.name.split(" ", 1)
-    first = name_parts[0]
-    last = name_parts[1] if len(name_parts) > 1 else ""
-    
-    # --- Keep your original role lookup ---
-    role = db.execute(text("""
-        SELECT role_id FROM roles WHERE role_name = :role
-    """), {"role": data.role}).fetchone()
+    try:
+        # 1. Prepare name parts for the database
+        name_parts = data.name.split(" ", 1)
+        first = name_parts[0]
+        last = name_parts[1] if len(name_parts) > 1 else ""
+        
+        # 2. Find the Role ID based on the string sent from frontend ('users' or 'taskers')
+        # logic: Fetching the role row to ensure we have a valid role_id
+        role_result = db.execute(text("SELECT role_id FROM roles WHERE role_name = :role"), 
+                                 {"role": data.role}).fetchone()
+        
+        if not role_result:
+            return {"error": f"Role '{data.role}' not found in database"}
 
-    # --- Keep your original user insertion ---
-    db.execute(text("""
-        INSERT INTO users (first_name, last_name, email, password_hash, role_id)
-        VALUES (:first, :last, :email, :password, :role_id)
-    """), {
-        "first": first,
-        "last": last,
-        "email": data.email,
-        "password": data.password,
-        "role_id": role[0]
-    })
-
-    # logic: We need the ID now to link the profile tables
-    user_id = db.execute(text("SELECT LAST_INSERT_ID()")).scalar()
-
-    # ==========================================================
-    # 🔥 NEW LOGIC: Conditional Profile Creation
-    # This fixes the 'fk_task_client' error by ensuring the ID 
-    # exists in the required secondary tables.
-    # ==========================================================
-    
-    # If the user is a 'user' (Hire Help), add them to the client table
-    # ==========================================================
-    # 🔥 FIXED LOGIC: Handling "user" vs "users"
-    # ==========================================================
-    
-    # logic: Added "users" to the check to match your frontend role string
-    if data.role.lower() in ["user", "users"]:
+        # 3. Create the entry in the 'users' table
+        # change: We include 'is_active' to match your database schema
         db.execute(text("""
-            INSERT INTO client (client_id, name, email)
-            VALUES (:id, :name, :email)
-        """), {"id": user_id, "name": data.name, "email": data.email})
+            INSERT INTO users (first_name, last_name, email, password_hash, role_id, is_active)
+            VALUES (:first, :last, :email, :password, :role_id, 1)
+        """), {
+            "first": first, "last": last, "email": data.email,
+            "password": data.password, "role_id": role_result[0]
+        })
 
-    # logic: Also updated tasker check just in case it is ever pluralized
-    elif data.role.lower() in ["tasker", "taskers"]:
-        db.execute(text("""
-            INSERT INTO tasker (tasker_id, name, email)
-            VALUES (:id, :name, :email)
-        """), {"id": user_id, "name": data.name, "email": data.email})
+        # 4. Get the ID of the user we just inserted
+        # logic: This ID is required to link the client/tasker table
+        user_id = db.execute(text("SELECT LAST_INSERT_ID()")).scalar()
 
-    # ==========================================================
+        # 5. Create the profile in the specific table (client or tasker)
+        # logic: Using .lower() and .strip() to handle 'users' vs 'user'
+        role_name_clean = data.role.lower().strip()
+        
+        if role_name_clean in ["user", "users"]:
+            db.execute(text("""
+                INSERT INTO client (client_id, name, email)
+                VALUES (:id, :name, :email)
+            """), {"id": user_id, "name": data.name, "email": data.email})
 
-    db.commit()
+        elif role_name_clean in ["tasker", "taskers"]:
+            db.execute(text("""
+                INSERT INTO tasker (tasker_id, name, email)
+                VALUES (:id, :name, :email)
+            """), {"id": user_id, "name": data.name, "email": data.email})
 
-    return {
-        "message": "User registered successfully",
-        "userId": user_id
-    }
+        # 6. 🔥 THE MOST IMPORTANT STEP: Commit the transaction
+        # This makes the user permanent. Without this, the database rolls back on error.
+        db.commit()
+
+        return {
+            "message": "User registered successfully",
+            "userId": user_id
+        }
+
+    except Exception as e:
+        # logic: If ANY of the above fails, undo everything so we don't have broken data
+        db.rollback() 
+        print(f"Signup Error: {str(e)}") 
+        return {"error": "Internal Server Error", "details": str(e)}
