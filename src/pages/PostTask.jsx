@@ -61,9 +61,10 @@ const PostTask = () => {
         // Logic: Clear title and description after success
         setFormData({ ...formData, title: '', description: '', budget: '' });
       } else {
-        const error = await response.json();
-        alert(`Failed: ${error.detail || "Check your database connection"}`);
-      }
+          const errorData = await response.json();
+  // logic: This stringifies the error so you can see which field (e.g., 'budget' or 'client_id') failed validation
+         alert(`Failed: ${JSON.stringify(errorData.detail)}`); 
+}
     } catch (err) {
       alert("Submission failed. Ensure your Render backend is running.");
     }
