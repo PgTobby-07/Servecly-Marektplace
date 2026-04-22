@@ -43,15 +43,15 @@ const PostTask = () => {
 
     // logic: We MUST match the Pydantic model names exactly
     const payload = {
-      categoryId: parseInt(formData.category_id), // change: matches 'categoryId' in main.py
-      title: formData.title,
-      description: formData.description,
-      location: formData.location,
-      budget: parseFloat(formData.budget),
-      client_id: user.id, // matches 'client_id' in main.py
-      service_id: 1 // temp: Set to 1 for now so the backend doesn't reject it
-    };
-
+  categoryId: parseInt(formData.category_id),
+  title: formData.title,
+  description: formData.description,
+  location: formData.location,
+  budget: parseFloat(formData.budget),
+  client_id: user.id, // logic: Matches your localStorage 'id'
+  service_id: 1, 
+  scheduled_time: formData.scheduled_time // change: Send the date to the backend
+};
     const response = await fetch(`${API_URL}/v1/tasks`, {
       method: 'POST',
       headers: { 
