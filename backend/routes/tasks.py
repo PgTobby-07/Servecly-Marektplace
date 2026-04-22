@@ -9,6 +9,7 @@ router = APIRouter(tags=["Tasks"])
 @router.post("")
 def create_task(data: TaskCreate, db: Session = Depends(get_db)):
     # logic: The keys here (left side of :) must match your Pydantic model exactly
+    try:
     db.execute(text("""
         INSERT INTO Task (client_id, category_id, service_id, title, description, location, budget, scheduled_time)
         VALUES (:client_id, :categoryId, :service_id, :title, :description, :location, :budget, :scheduled_time)
