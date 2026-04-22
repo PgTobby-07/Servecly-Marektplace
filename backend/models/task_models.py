@@ -8,3 +8,4 @@ class TaskCreate(BaseModel):
     budget: float
     service_id: int
     client_id: int
+    scheduled_time: str # change: Add this field here
