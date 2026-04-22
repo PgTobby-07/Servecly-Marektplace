@@ -40,20 +40,29 @@ const PostTask = () => {
   
   try {
     const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
+    const userString = localStorage.getItem("user");
+    
+    if (!userString) {
+      alert("Please log in again.");
+      return;
+    }
+    
+    const user = JSON.parse(userString);
 
     const payload = {
-      categoryId: parseInt(formData.category_id),
+      // logic: Match the Pydantic 'categoryId' while sending the integer ID
+      categoryId: parseInt(formData.category_id), 
       title: formData.title,
       description: formData.description,
       location: formData.location,
+      // logic: Convert string to float for the DECIMAL(10,2) column
       budget: parseFloat(formData.budget),
-      client_id: user.id, // logic: Matches the 'id' key in your storage
-      service_id: 1,      // logic: Required by your Pydantic model
-      
-      // change: This was missing and caused the "Field required" error
+      client_id: parseInt(user.id), 
+      service_id: 1, // Ensure this ID exists in your Service table
       scheduled_time: formData.scheduled_time 
     };
+
+    console.log("Sending Payload:", payload); // Debug: Check this in your browser console
 
     const response = await fetch(`${API_URL}/v1/tasks`, {
       method: 'POST',
@@ -66,9 +75,10 @@ const PostTask = () => {
 
     if (response.ok) {
       alert("Task posted successfully!");
-      window.location.href = "/services"; // logic: Redirect to see the live task
+      window.location.href = "/services";
     } else {
       const errorData = await response.json();
+      // change: This now properly displays the specific backend validation error
       alert(`Validation Error: ${JSON.stringify(errorData.detail)}`);
     }
   } catch (err) {
