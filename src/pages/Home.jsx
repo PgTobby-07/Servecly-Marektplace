@@ -15,11 +15,10 @@ const Home = () => {
     };
     checkUser();
     
-    // UI: Interactive parallax listener for the "Mind-Blowing" background
     const handleMouseMove = (e) => {
       setMousePos({ 
-        x: (e.clientX / window.innerWidth - 0.5) * 20, 
-        y: (e.clientY / window.innerHeight - 0.5) * 20 
+        x: (e.clientX / window.innerWidth - 0.5) * 15, 
+        y: (e.clientY / window.innerHeight - 0.5) * 15 
       });
     };
     window.addEventListener('mousemove', handleMouseMove);
@@ -30,122 +29,112 @@ const Home = () => {
     };
   }, []);
 
-  // LOGIC: The "Bridge" - sends search text to /services via URL
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
     navigate(`/services?search=${encodeURIComponent(searchQuery)}`);
   };
 
-  // LOGIC: IDs matched to your SQL Database for immediate filtering
   const categories = [
-    { id: 4, name: "Shelving", icon: "🛠️", count: "1.2k+", color: "from-blue-500/20" },
-    { id: 3, name: "TV Mounting", icon: "🖼️", count: "800+", color: "from-purple-500/20" },
-    { id: 1, name: "Beds", icon: "🛏️", count: "2.5k+", color: "from-orange-500/20" },
-    { id: 2, name: "Desks", icon: "💻", count: "3k+", color: "from-cyan-500/20" },
+    { id: 4, name: "Shelving", icon: "🛠️", count: "1.2k+", color: "from-blue-500/10" },
+    { id: 3, name: "TV Mounting", icon: "🖼️", count: "800+", color: "from-purple-500/10" },
+    { id: 1, name: "Beds", icon: "🛏️", count: "2.5k+", color: "from-orange-500/10" },
+    { id: 2, name: "Desks", icon: "💻", count: "3k+", color: "from-cyan-500/10" },
   ];
 
   return (
-    <div className="bg-[#f8fafc] overflow-hidden selection:bg-primary selection:text-white">
+    // Boring fixed: Soft gradient background instead of flat white
+    <div className="bg-gradient-to-b from-[#f8fafc] via-white to-[#f1f5f9] overflow-hidden">
       
-      {/* HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center pt-20 pb-32">
-        {/* PARALLAX AURA */}
+      {/* HERO SECTION - Tighter padding to show search bar early */}
+      <section className="relative min-h-[85vh] flex items-center pt-10 pb-20">
         <div 
-          className="absolute inset-0 z-0 pointer-events-none transition-transform duration-300 ease-out"
+          className="absolute inset-0 z-0 pointer-events-none"
           style={{ transform: `translate(${mousePos.x}px, ${mousePos.y}px)` }}
         >
-          <div className="absolute top-[-10%] right-[-10%] w-[700px] h-[700px] bg-primary/10 blur-[140px] rounded-full" />
-          <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-secondary/10 blur-[120px] rounded-full" />
+          <div className="absolute top-[-5%] right-[-5%] w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[10%] left-[-5%] w-[500px] h-[500px] bg-secondary/5 blur-[100px] rounded-full" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-20">
+        <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
             
-            <div className="max-w-3xl animate-in fade-in slide-in-from-left-8 duration-1000">
-              {/* ROLE-BASED UX: Personalized Welcome */}
+            <div className="max-w-2xl text-center lg:text-left">
+              {/* User Badge - Reduced margin */}
               {user && (
-                <div className="inline-flex items-center gap-3 bg-white/60 backdrop-blur-xl border border-white p-2 pr-6 rounded-full shadow-sm mb-8">
-                  <div className="h-10 w-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm">
+                <div className="inline-flex items-center gap-3 bg-white border border-slate-100 p-1.5 pr-5 rounded-full shadow-sm mb-6">
+                  <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xs">
                     {user.name.charAt(0)}
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] uppercase tracking-widest font-black text-primary leading-none">
-                      {user.role === 'admin' ? "System Core" : user.role === 'tasker' ? "Active Provider" : "Verified Client"}
+                    <span className="text-[9px] uppercase tracking-widest font-black text-primary leading-none">
+                      {user.role === 'admin' ? "System Core" : "Member"}
                     </span>
-                    <span className="text-sm font-bold text-slate-800">{user.name}</span>
+                    <span className="text-xs font-bold text-slate-700">{user.name}</span>
                   </div>
                 </div>
               )}
 
-              <h1 className="text-6xl md:text-8xl font-display text-slate-900 leading-[0.95] tracking-tight font-black mb-8">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight mb-6">
                 The standard of <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-600 to-indigo-600">
-                  curated help.
-                </span>
+                <span className="text-primary">curated help.</span>
               </h1>
               
-              <p className="text-slate-600 text-xl md:text-2xl mb-12 leading-relaxed max-w-2xl font-light">
-                Connect instantly with vetted professionals for home assembly, mounting, and repairs in Istanbul.
+              <p className="text-slate-500 text-lg md:text-xl mb-8 leading-relaxed max-w-xl font-light">
+                Professional assembly and repairs for your home in Istanbul.
               </p>
 
-              {/* SEARCH: Redirects with encoded query */}
-              <form onSubmit={handleSearch} className="relative max-w-2xl group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-600 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition"></div>
-                <div className="relative flex items-center bg-white border border-slate-200 p-2 rounded-[2rem] shadow-xl">
+              {/* SEARCH BAR - Positioned higher */}
+              <form onSubmit={handleSearch} className="relative group max-w-xl mx-auto lg:mx-0">
+                <div className="relative flex items-center bg-white border border-slate-200 p-1.5 rounded-2xl shadow-lg focus-within:ring-2 focus-within:ring-primary/20 transition-all">
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="What do you need help with?"
-                    className="flex-grow bg-transparent px-8 py-5 text-lg outline-none font-medium"
+                    placeholder="Search services..."
+                    className="flex-grow bg-transparent px-6 py-3 text-base outline-none"
                   />
-                  <button type="submit" className="bg-primary text-white px-10 py-5 rounded-[1.5rem] font-bold text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/25">
+                  <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">
                     Search
                   </button>
                 </div>
               </form>
             </div>
 
-            {/* FLOATING IMAGE COMPONENT */}
-            <div className="hidden lg:block relative w-full max-w-xl">
+            {/* IMAGE - Tighter sizing to prevent scroll */}
+            <div className="hidden lg:block relative w-full max-w-md">
               <img 
                 src={fdxImage} 
-                className="relative z-10 w-full h-[650px] object-cover shadow-2xl rounded-[100px_40px_100px_40px] hover:rotate-2 transition-transform duration-700"
-                alt="Professional help"
+                className="relative z-10 w-full h-[500px] object-cover rounded-[60px_20px_60px_20px] shadow-xl"
+                alt="Expert"
               />
-              <div className="absolute bottom-12 -left-12 z-20 bg-white/90 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-white flex items-center gap-5">
-                <div className="h-14 w-14 bg-green-500 rounded-full flex items-center justify-center text-white">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+              <div className="absolute -bottom-6 -left-6 z-20 bg-white p-4 rounded-2xl shadow-xl border border-slate-50 flex items-center gap-3">
+                <div className="h-10 w-10 bg-green-500 rounded-full flex items-center justify-center text-white">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
                 </div>
-                <div>
-                  <span className="block text-lg font-black text-slate-900 tracking-tight">Vetted Expert</span>
-                  <span className="block text-[10px] text-slate-500 uppercase font-black tracking-widest">Architectural Quality</span>
-                </div>
+                <span className="text-sm font-black text-slate-900">Vetted Pro</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* POPULAR CATEGORIES */}
-      <section className="py-32 bg-white">
+      {/* CATEGORIES - Clean break */}
+      <section className="py-20 bg-white/50 backdrop-blur-sm border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-5xl font-black text-slate-900 mb-20 tracking-tighter">Popular Categories</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <h2 className="text-3xl font-black text-slate-900 mb-12 tracking-tight">Popular Categories</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((cat) => (
               <Link
                 key={cat.id}
                 to={`/services?categoryId=${cat.id}`}
-                className="relative overflow-hidden bg-slate-50 border border-slate-100 p-10 rounded-[3rem] transition-all hover:shadow-2xl hover:-translate-y-4 group"
+                className="group relative overflow-hidden bg-white border border-slate-200 p-8 rounded-3xl transition-all hover:shadow-xl hover:-translate-y-2"
               >
-                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${cat.color} blur-3xl opacity-0 group-hover:opacity-100 transition-opacity`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
                 <div className="relative z-10">
-                  <div className="text-5xl mb-8 group-hover:scale-110 transition-transform">{cat.icon}</div>
-                  <h3 className="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary transition-colors">{cat.name}</h3>
-                  <div className="inline-block bg-white border border-slate-200 px-5 py-2 rounded-2xl text-xs font-black text-primary shadow-sm">
-                    {cat.count} Providers
-                  </div>
+                  <div className="text-4xl mb-6">{cat.icon}</div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">{cat.name}</h3>
+                  <p className="text-xs font-bold text-primary">{cat.count} Taskers</p>
                 </div>
               </Link>
             ))}
