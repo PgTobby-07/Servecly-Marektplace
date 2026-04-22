@@ -49,7 +49,7 @@ const PostTask = () => {
     e.preventDefault();
     
     // change: Security check - ensure only 'user' role can even trigger the fetch
-    if (!user || user.role !== 'user') {
+    if (!user || user.role !== 'users') {
       alert("Only 'Hire Help' accounts can post tasks.");
       return;
     }
