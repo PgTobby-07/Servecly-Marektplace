@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // CHANGE: Essential for Step 4 (Hot-Zone Navigation)
 import TaskList from '../components/TaskList';
+import { useLocation } from 'react-router-dom';
 
 const Services = () => {
   const [categories, setCategories] = useState([]);
@@ -10,7 +11,15 @@ const Services = () => {
   const navigate = useNavigate(); // CHANGE: Step 4 - Initializing the "Bridge" to Post Task
 
   const API_URL = import.meta.env.VITE_API_URL || 'https://servecly-api.onrender.com';
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialCat = queryParams.get('categoryId');
 
+   useEffect(() => {
+  if (initialCat) {
+    setSelectedCategoryId(parseInt(initialCat)); // Automatically clicks the category for the user!
+  }
+}, [initialCat]);
   // CHANGE: Step 5 - Optional Role-Based Logic (Retrieving role from local storage)
   const userRole = localStorage.getItem('userRole') || 'client'; 
 
