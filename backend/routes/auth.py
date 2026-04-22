@@ -101,14 +101,19 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
     # ==========================================================
     
     # If the user is a 'user' (Hire Help), add them to the client table
-    if data.role.lower() == "user":
+    # ==========================================================
+    # 🔥 FIXED LOGIC: Handling "user" vs "users"
+    # ==========================================================
+    
+    # logic: Added "users" to the check to match your frontend role string
+    if data.role.lower() in ["user", "users"]:
         db.execute(text("""
             INSERT INTO client (client_id, name, email)
             VALUES (:id, :name, :email)
         """), {"id": user_id, "name": data.name, "email": data.email})
 
-    # If the user is a 'tasker' (Work as Tasker), add them to the tasker table
-    elif data.role.lower() == "tasker":
+    # logic: Also updated tasker check just in case it is ever pluralized
+    elif data.role.lower() in ["tasker", "taskers"]:
         db.execute(text("""
             INSERT INTO tasker (tasker_id, name, email)
             VALUES (:id, :name, :email)
