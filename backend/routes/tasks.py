@@ -8,23 +8,22 @@ router = APIRouter(tags=["Tasks"])
 
 @router.post("")
 def create_task(data: TaskCreate, db: Session = Depends(get_db)):
-    try:
-        # logic: You must add scheduled_time here to match your DB columns
-        db.execute(text("""
-            INSERT INTO Task (client_id, category_id, service_id, title, description, location, budget, scheduled_time)
-            VALUES (:client_id, :categoryId, :service_id, :title, :description, :location, :budget, :scheduled_time)
-        """), {
-            "client_id": data.client_id,
-            "categoryId": data.categoryId,
-            "service_id": data.service_id,
-            "title": data.title,
-            "description": data.description,
-            "location": data.location,
-            "budget": data.budget,
-            "scheduled_time": data.scheduled_time # logic: This is the missing piece!
-        })
-        db.commit()
-        return {"message": "Task posted successfully"}
+    # logic: The keys here (left side of :) must match your Pydantic model exactly
+    db.execute(text("""
+        INSERT INTO Task (client_id, category_id, service_id, title, description, location, budget, scheduled_time)
+        VALUES (:client_id, :categoryId, :service_id, :title, :description, :location, :budget, :scheduled_time)
+    """), {
+        "client_id": data.client_id,
+        "categoryId": data.categoryId, 
+        "service_id": data.service_id,
+        "title": data.title,
+        "description": data.description,
+        "location": data.location,
+        "budget": data.budget,
+        "scheduled_time": data.scheduled_time 
+    })
+    db.commit()
+    return {"message": "Task posted successfully"}
     except Exception as e:
         db.rollback()
         # logic: This helps you see the error in your Render logs
