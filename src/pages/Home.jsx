@@ -151,9 +151,8 @@ const Home = () => {
             <div className="flex items-center gap-6">
               <div className="h-20 w-20 bg-slate-900 rounded-full border-2 border-cyan-500 flex items-center justify-center font-black text-3xl text-cyan-500 italic shadow-2xl">RA</div>
               <div>
-                <span className="block text-white font-black uppercase tracking-widest">Mr. R.A.</span>
-                <span className="block text-slate-500 text-xs font-bold uppercase tracking-widest mt-1 italic">Software Engineer, Istinye University</span>
-                <span className="block text-slate-500 text-xs font-bold uppercase tracking-widest mt-1 italic">Founder, Servecly</span>
+                <span className="block text-white font-black uppercase tracking-widest">Mr. R.A.</span>  
+              <span className="block text-slate-500 text-xs font-bold uppercase tracking-widest mt-1 italic">Founder, Servecly</span>
               </div>
             </div>
           </div>
