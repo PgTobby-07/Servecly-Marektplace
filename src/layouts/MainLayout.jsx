@@ -43,19 +43,20 @@ const MainLayout = ({ children }) => {
             </Link>
 
             <div className="hidden md:flex items-center gap-8 text-sm font-medium text-on-surface-variant">
-              <Link to="/" className="hover:text-primary transition-colors">Categories</Link>
-              <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
-              {/* logic: Show for Guests (no user) OR Clients (role 'user') */}
-             {(!user || user.role === 'users') && (
+              <Link to="/" className="text-primary font-bold hover:underline">Home</Link>
+              {(!user || user.role === 'users') && (
               <Link to="/post-task" className="hover:text-primary transition-colors">Post a Task</Link>
               )}
-              {/* FIXED: Added a general Dashboard link for logged-in users */}
               {user && (
-                <Link to="/dashboard" className="text-primary font-bold hover:underline">Dashboard</Link>
+                <Link to="/dashboard" className="text-primary font-bold hover:underline">My Dashboard</Link>
               )}
+              <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
+              {/* logic: Show for Guests (no user) OR Clients (role 'user') */}
+              {/* FIXED: Added a general Dashboard link for logged-in users */}
+              
 
               {/* FIXED: Neatly integrated 'Complete Setup' so it doesn't distract the nav */}
-              {user?.role === 'tasker' && (user?.status === 'new' || !user?.status) && (
+              {user?.role === 'tasker' && (   //user?.status === 'new' || !user?.status) && (
                 <Link 
                   to="/profile-setup" 
                   className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold animate-pulse"
