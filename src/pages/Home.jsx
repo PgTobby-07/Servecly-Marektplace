@@ -153,6 +153,7 @@ const Home = () => {
               <div>
                 <span className="block text-white font-black uppercase tracking-widest">Mr. R.A.</span>
                 <span className="block text-slate-500 text-xs font-bold uppercase tracking-widest mt-1 italic">Software Engineer, Istinye University</span>
+                <span className="block text-slate-500 text-xs font-bold uppercase tracking-widest mt-1 italic">Founder, Servecly</span>
               </div>
             </div>
           </div>
@@ -202,7 +203,7 @@ const Home = () => {
           <div className="flex flex-col items-center">
             <div className="h-20 w-20 bg-slate-800 rounded-full mb-6 border-2 border-cyan-500 flex items-center justify-center font-black text-3xl text-cyan-500 italic">T</div>
             <span className="text-white font-black uppercase tracking-widest text-sm">Mr. T</span>
-            <span className="text-slate-500 text-[10px] font-bold uppercase mt-2">Founder & CEO, Servecly</span>
+            <span className="text-slate-500 text-[10px] font-bold uppercase mt-2"> CTO, Servecly</span>
           </div>
         </div>
       </footer>
