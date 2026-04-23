@@ -5,6 +5,9 @@ from config.database import get_db
 from models.auth_models import LoginRequest, SignupRequest
 from jose import jwt
 from datetime import datetime, timedelta
+from fastapi import HTTPException, status
+from jose import JWTError
+
 
 router = APIRouter(tags=["Authentication"])
 
@@ -126,3 +129,19 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
         db.rollback()
         print(f"Signup Error: {str(e)}")
         return {"error": "Internal Server Error", "details": str(e)}
+
+# Add this function:
+def get_current_user(token: str = Depends(oauth2_scheme)): # Note: You'll need oauth2_scheme defined
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+        return user_id
+    except JWTError:
+        raise credentials_exception
