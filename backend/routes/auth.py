@@ -126,7 +126,4 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
         db.rollback()
         print(f"Signup Error: {str(e)}")
         return {"error": "Internal Server Error", "details": str(e)}
-
-
-
 f
