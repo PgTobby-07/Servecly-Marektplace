@@ -79,11 +79,11 @@ const MainLayout = ({ children }) => {
               )}
                
                {user?.role === 'admin' && (
-              <Link to="/admin/taxonomy" className="bg-cyan-500 text-white px-6 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all">Manage Taxonomy</Link>
+              <Link to="/admin/taxonomy" className="text-primary font-bold hover:underline">Manage Taxonomy</Link>
           )}
 
                {user?.role === 'admin' && (
-              <Link to="/admin/vetting" className="bg-cyan-500 text-white px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-cyan-600 transition-all">Vetting Pipeline</Link>
+              <Link to="/admin/vetting" className="text-primary font-bold hover:underline">Vetting Pipeline</Link>
           )}
               {(!user || user.role === "users") && (
                 <Link
