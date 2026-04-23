@@ -147,7 +147,7 @@ const CustomerView = ({ navigate, data }) => (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
        <div className="md:col-span-2 bg-white p-10 rounded-[40px] border border-outline-variant/10 shadow-sm">
          
-         <h2 className="text-2xl font-bold mb-4">My Bookings</h2>
+         <h2 onClick={() => navigate('/bookings')} className="text-2xl font-bold mb-4">My Bookings</h2>
            
           <div className="divide-y">
             {data.length > 0 ? data.map((booking, i) => (
