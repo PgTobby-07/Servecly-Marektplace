@@ -50,7 +50,10 @@ const MainLayout = ({ children }) => {
               {user && (
                 <Link to="/dashboard" className="text-primary font-bold hover:underline">My Dashboard</Link>
               )}
-              <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
+              {(!user || user.role === 'users') && (
+                <Link to="/services" className="hover:text-primary transition-colors">Find Help</Link>
+              )}
+              
               {/* logic: Show for Guests (no user) OR Clients (role 'user') */}
               {/* FIXED: Added a general Dashboard link for logged-in users */}
               
