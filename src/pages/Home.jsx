@@ -12,9 +12,7 @@ const Home = () => {
     if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
-  // 1. THE EXCLUSIVE ACCESS NODE LOGIC
   const getAccessStatus = () => {
-    // CAPTURING POTENTIAL USERS & TASKERS
     if (!user) {
       return { 
         label: "GATEWAY ACCESS", 
@@ -27,7 +25,6 @@ const Home = () => {
     
     const firstName = user.name?.split(' ')[0] || 'User';
     
-    // ADMIN: SYSTEM ARCHITECT
     if (user.role === 'admin') {
       return { 
         label: "SYSTEM ARCHITECT", 
@@ -38,7 +35,6 @@ const Home = () => {
       };
     }
     
-    // TASKER: VERIFIED ASSET
     if (user.role === 'tasker') {
       return { 
         label: "VERIFIED ASSET", 
@@ -49,7 +45,6 @@ const Home = () => {
       };
     }
 
-    // CLIENT: ACTIVE NODE
     return { 
       label: "ACTIVE NODE", 
       message: `Syncing: ${firstName}`, 
@@ -78,10 +73,8 @@ const Home = () => {
   return (
     <div className="bg-[#020617] text-slate-200 min-h-screen selection:bg-cyan-500 overflow-x-hidden">
       
-      {/* TOP NAV: ACCESS ANCHOR */}
       <header className="relative z-30 pt-8 px-6 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         
-        {/* DYNAMIC ACCESS NODE - LINKED TO LOGIN IF GUEST */}
         <Link to={!user ? "/login" : "/dashboard"} className="flex items-center gap-4 bg-white/5 backdrop-blur-3xl border border-white/10 p-4 rounded-2xl shadow-2xl group hover:border-cyan-500/50 transition-all duration-500">
           <div className={`h-12 w-12 bg-gradient-to-tr ${status.color} rounded-xl flex items-center justify-center font-black text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
             {status.initial}
@@ -102,22 +95,27 @@ const Home = () => {
           </div>
         </Link>
 
-        {/* QUICK COMMANDS BASED ON ROLE */}
         <div className="flex items-center gap-4">
           {!user && (
             <Link to="/signup" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white border-b border-transparent hover:border-cyan-500 py-1 transition-all">
               Initialize Account
             </Link>
           )}
+          
+          {/* RESTORED ADMIN COMMANDS */}
           {user?.role === 'admin' && (
-            <Link to="/admin/taxonomy" className="bg-cyan-500 text-white px-8 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all">
-              Manage Taxonomy
-            </Link>
+            <div className="flex gap-3">
+              <Link to="/admin/taxonomy" className="bg-cyan-500 text-white px-6 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all">
+                Manage Taxonomy
+              </Link>
+              <Link to="/admin/vetting" className="bg-white/10 text-white border border-white/20 px-6 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all">
+                Vetting Pipeline
+              </Link>
+            </div>
           )}
         </div>
       </header>
 
-      {/* HERO SECTION */}
       <section className="relative z-10 pt-12 pb-16">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left">
@@ -150,7 +148,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* THE ESSENTIAL FIVE */}
       <section className="py-20 relative z-20">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-black text-white tracking-tighter mb-12 italic uppercase">The Essential Five</h2>
@@ -162,20 +159,6 @@ const Home = () => {
                 <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">{cat.count} EXPERTS</span>
               </Link>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* THE ENGINEER'S VISION */}
-      <section className="py-40 bg-white/[0.01] border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-4xl md:text-5xl text-white font-light italic leading-tight mb-20 max-w-5xl mx-auto">
-            "We are coding a future where trust is an algorithm and <span className="text-cyan-500 font-bold">precision</span> is a universal right."
-          </p>
-          <div className="flex flex-col items-center">
-            <div className="h-24 w-24 bg-slate-900 rounded-full border-2 border-cyan-500 flex items-center justify-center font-black text-4xl text-cyan-500 italic shadow-2xl mb-6">RA</div>
-            <span className="text-white font-black uppercase tracking-widest text-lg">Mr. R.A.</span>
-            <span className="text-slate-500 text-xs font-bold uppercase tracking-[0.3em] mt-2">Software Engineer • Istinye University</span>
           </div>
         </div>
       </section>
