@@ -28,7 +28,7 @@ const Home = () => {
     
     if (user.role === 'admin') {
       return { 
-        label: "SYSTEM ARCHITECT", 
+        label: "SYSTEM ADMIN", 
         message: `Root Control: ${firstName}`, 
         subtext: "SYSTEM CORE OPERATIONAL",
         color: "from-cyan-500 to-blue-600 shadow-cyan-500/20",
@@ -38,7 +38,7 @@ const Home = () => {
     
     if (user.role === 'tasker') {
       return { 
-        label: "VERIFIED ASSET", 
+        label: "TASKER ACCOUNT", 
         message: `Active Flow: ${firstName}`, 
         subtext: "SERVICE PIPELINE OPEN",
         color: "from-emerald-500 to-teal-400 shadow-emerald-500/20",
@@ -47,7 +47,7 @@ const Home = () => {
     }
 
     return { 
-      label: "ACTIVE NODE", 
+      label: "USER ACCOUNT", 
       message: `Syncing: ${firstName}`, 
       subtext: "CLIENT INTERFACE READY",
       color: "from-purple-500 to-indigo-600 shadow-purple-500/20",
