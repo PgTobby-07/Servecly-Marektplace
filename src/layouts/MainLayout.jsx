@@ -194,6 +194,14 @@ const MainLayout = ({ children }) => {
                 </Link>
               )}
 
+                {user?.role === 'admin' && (
+              <Link to="/admin/taxonomy" className="text-primary font-bold hover:underline">Manage Taxonomy</Link>
+          )}
+
+               {user?.role === 'admin' && (
+              <Link to="/admin/vetting" className="text-primary font-bold hover:underline">Vetting Pipeline</Link>
+          )}
+
               {user?.role === "tasker" && (
                 <Link
                   to="/profile-setup"
