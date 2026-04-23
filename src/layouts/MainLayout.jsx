@@ -77,12 +77,13 @@ const MainLayout = ({ children }) => {
                   My Dashboard
                 </Link>
               )}
-
+               <>
                {user?.role === 'admin' && (
               <Link to="/admin/taxonomy" className="bg-cyan-500 text-white px-6 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all">Manage Taxonomy</Link>
               <Link to="/admin/vetting" className="bg-white/10 text-white border border-white/20 px-6 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all">Vetting Pipeline</Link>
             
           )}
+              </>
               {(!user || user.role === "users") && (
                 <Link
                   to="/services"
