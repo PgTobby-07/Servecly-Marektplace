@@ -64,11 +64,11 @@ const Home = () => {
   };
 
   const categories = [
-    { id: 1, name: "Beds", icon: "🛏️", count: "2.5k+", color: "from-blue-600 to-cyan-400" },
-    { id: 5, name: "Deep Cleaning", icon: "✨", count: "3k+", color: "from-emerald-500 to-teal-400" },
-    { id: 2, name: "Desks", icon: "💻", count: "3k+", color: "from-purple-600 to-indigo-400" },
-    { id: 4, name: "Shelving", icon: "🛠️", count: "1.2k+", color: "from-orange-500 to-amber-400" },
-    { id: 3, name: "TV Mounting", icon: "🖼️", count: "800+", color: "from-rose-500 to-pink-400" },
+    { id: 1, name: "Beds", icon: "🛏️", count: "200+", color: "from-blue-600 to-cyan-400" },
+    { id: 5, name: "Deep Cleaning", icon: "✨", count: "150+", color: "from-emerald-500 to-teal-400" },
+    { id: 2, name: "Desks", icon: "💻", count: "340+", color: "from-purple-600 to-indigo-400" },
+    { id: 4, name: "Shelving", icon: "🛠️", count: "100+", color: "from-orange-500 to-amber-400" },
+    { id: 3, name: "TV Mounting", icon: "🖼️", count: "500+", color: "from-rose-500 to-pink-400" },
   ];
 
   return (
