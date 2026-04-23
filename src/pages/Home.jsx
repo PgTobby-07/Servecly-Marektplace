@@ -247,6 +247,7 @@ const Home = () => {
           </div>
         </div>
       </footer>
+        </main>
     </div>
   );
 };
