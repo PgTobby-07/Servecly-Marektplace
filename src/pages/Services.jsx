@@ -85,31 +85,49 @@ const Services = () => {
             <div className="bg-white/30 backdrop-blur-md p-6 rounded-3xl border border-outline-variant/30 shadow-sm">
               <h3 className="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant mb-6 opacity-70">Categories</h3>
               <ul className="space-y-3">
-                <li 
-                  onClick={() => {
-                    setSelectedCategoryId(null);
-                    navigate('/services'); // Clear URL when resetting
-                  }}
-                  className={`cursor-pointer px-4 py-3 rounded-xl transition-all text-sm font-medium border-2 ${!selectedCategoryId ? 'bg-primary text-white border-primary shadow-lg' : 'border-transparent hover:bg-primary/10 text-on-surface-variant'}`}
-                >
-                  All Services
-                </li>
-                
-                {categories.map((cat) => (
-                  <li 
-                    key={cat.id} 
-                    onClick={() => setSelectedCategoryId(cat.id)}
-                    className={`group cursor-pointer px-4 py-3 rounded-xl transition-all flex justify-between items-center text-sm border-2
-                      ${selectedCategoryId === cat.id ? 'bg-primary text-white border-primary shadow-lg' : 'border-transparent hover:bg-primary/5 text-on-surface-variant hover:text-primary'}
-                    `}
-                  >
-                    <span>{cat.name}</span>
-                    <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${selectedCategoryId === cat.id ? 'bg-white/20' : 'bg-surface-container-high'}`}>
-                      {cat.taskerCount || 0}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+  <li
+    onClick={() => {
+      setSelectedCategoryId(null);
+      navigate('/services');
+    }}
+    className={`cursor-pointer px-4 py-3 rounded-xl transition-all text-sm font-medium border-2 ${
+      !selectedCategoryId
+        ? 'bg-primary text-white border-primary shadow-lg'
+        : 'border-transparent hover:bg-primary/10 text-on-surface-variant'
+    }`}
+  >
+    All Services
+  </li>
+
+  {categories.map((cat) => (
+    <li
+      key={cat.id}
+      onClick={() => {
+        setSelectedCategoryId(cat.id);
+        navigate(`/services?categoryId=${cat.id}`);
+      }}
+      className={`group cursor-pointer px-4 py-3 rounded-xl transition-all flex justify-between items-center text-sm border-2
+        ${
+          selectedCategoryId === cat.id
+            ? 'bg-primary text-white border-primary shadow-lg'
+            : 'border-transparent hover:bg-primary/5 text-on-surface-variant hover:text-primary'
+        }
+      `}
+    >
+      <span>{cat.name}</span>
+
+      <span
+        className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+          selectedCategoryId === cat.id
+            ? 'bg-white/20'
+            : 'bg-surface-container-high'
+        }`}
+      >
+        {cat.taskerCount || 0}
+      </span>
+    </li>
+  ))}
+</ul>
             </div>
 
             {/* INSIGHT CARD */}
