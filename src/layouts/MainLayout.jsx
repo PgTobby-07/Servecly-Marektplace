@@ -83,7 +83,7 @@ const MainLayout = ({ children }) => {
           )}
 
                {user?.role === 'admin' && (
-              <Link to="/admin/vetting" className="bg-white/10 text-white border border-white/20 px-6 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all">Vetting Pipeline</Link>
+              <Link to="/admin/vetting" className="bg-cyan-500 text-white px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-cyan-600 transition-all">Vetting Pipeline</Link>
           )}
               {(!user || user.role === "users") && (
                 <Link
