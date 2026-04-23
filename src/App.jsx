@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-
-// Layout & Pages
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import Services from './pages/Services';
@@ -15,43 +13,128 @@ import AdminVetting from './pages/AdminVetting';
 import AdminTaxonomy from './pages/AdminTaxonomy';
 import PostTask from './pages/PostTask';
 import Dashboard from './pages/Dashboard';
+import ScrollToTop from './ScrollToTop';
 
-// 1. SCROLL MANAGEMENT COMPONENT
-// This ensures that every navigation resets the view to the top.
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-};
+// Placeholder for other screens to be implemented
+const Placeholder = ({ title }) => (
+  <MainLayout>
+    <div className="flex items-center justify-center h-96">
+      <h1 className="text-2xl font-display text-on-surface-variant italic">
+        {title} Screen - Coming Soon
+      </h1>
+    </div>
+  </MainLayout>
+);
 
 function App() {
   return (
     <BrowserRouter>
-      {/* Utility to fix the "bottom of the page" navigation issue */}
-      <ScrollToTop /> 
+      <ScrollToTop />
 
       <Routes>
-        {/* AUTH PAGES: These do NOT use the MainLayout */}
+        {/* Core Pages */}
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <Home />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/services"
+          element={
+            <MainLayout>
+              <Services />
+            </MainLayout>
+          }
+        />
+
+        {/* Auth Pages */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
 
-        {/* MARKETPLACE PAGES: Wrapped in MainLayout for efficiency */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/post-task" element={<PostTask />} />
-          <Route path="/bookings" element={<Bookings />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile-setup" element={<ProfileSetup />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/availability" element={<Availability />} />
-          <Route path="/admin/vetting" element={<AdminVetting />} />
-          <Route path="/admin/taxonomy" element={<AdminTaxonomy />} />
-        </Route>
+        {/* Other Marketplace Routes */}
+        <Route
+          path="/post-task"
+          element={
+            <MainLayout>
+              <PostTask />
+            </MainLayout>
+          }
+        />
 
-        {/* FALLBACK */}
+        <Route
+          path="/bookings"
+          element={
+            <MainLayout>
+              <Bookings />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <MainLayout>
+              <Dashboard />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/profile-setup"
+          element={
+            <MainLayout>
+              <ProfileSetup />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/payment"
+          element={
+            <MainLayout>
+              <Payment />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/availability"
+          element={
+            <MainLayout>
+              <Availability />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/admin/vetting"
+          element={
+            <MainLayout>
+              <AdminVetting />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/admin/taxonomy"
+          element={
+            <MainLayout>
+              <AdminTaxonomy />
+            </MainLayout>
+          }
+        />
+
+        {/* Placeholder Example */}
+        <Route
+          path="/coming-soon"
+          element={<Placeholder title="Coming Soon" />}
+        />
+
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
