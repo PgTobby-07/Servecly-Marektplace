@@ -13,7 +13,7 @@ import AdminVetting from './pages/AdminVetting';
 import AdminTaxonomy from './pages/AdminTaxonomy';
 import PostTask from './pages/PostTask';
 import Dashboard from './pages/Dashboard';
-import ScrollToTop from './ScrollToTop';
+import ScrollToTop from './components/ScrollToTop';
 
 // Placeholder for other screens to be implemented
 const Placeholder = ({ title }) => (
