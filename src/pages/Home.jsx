@@ -183,39 +183,70 @@ const Home = () => {
           </div>
         </section>
 
-        {/* FIX 10: IMPORTANT — added missing bottom spacing so pages don’t get cut off */}
-        <div className="h-16 sm:h-24" />
-
-        {/* ENGINEER SECTION */}
-        <section className="py-24 sm:py-32 bg-white/[0.01] border-y border-white/5">
-
-          {/* FIX 11: prevent side clipping on mobile */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-16 lg:gap-24">
-
-            <div>
-              <h2 className="text-4xl sm:text-5xl font-black text-white mb-10">
-                Envisioned at <span className="text-cyan-500">Istinye University.</span>
-              </h2>
-
-              <p className="text-lg sm:text-2xl text-slate-300 italic">
-                "In the next 5 years..."
-              </p>
+        {/* 4. THE ENGINEER'S VISION: Mr. R.A. */}
+      <section className="py-32 bg-white/[0.01] border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
+          <div>
+            <h2 className="text-5xl font-black text-white mb-10 tracking-tighter italic">Envisioned at <br /><span className="text-cyan-500">Istinye University.</span></h2>
+            <p className="text-2xl text-slate-300 font-light italic leading-relaxed mb-12">"In the next 5 years, Servecly won't just be a platform; it will be the architectural backbone of the global service economy."</p>
+            <div className="flex items-center gap-6">
+              <div className="h-20 w-20 bg-slate-900 rounded-full border-2 border-cyan-500 flex items-center justify-center font-black text-3xl text-cyan-500 italic shadow-2xl">RA</div>
+              <div>
+                <span className="block text-white font-black uppercase tracking-widest">Mr. R.A.</span>  
+              <span className="block text-slate-500 text-xs font-bold uppercase tracking-widest mt-1 italic">Founder, Servecly</span>
+              </div>
             </div>
-
           </div>
-        </section>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="bg-white/5 p-10 rounded-[3rem] border border-white/10 mt-12">
+               <h4 className="text-cyan-500 font-black text-4xl mb-4">2031</h4>
+               <p className="text-slate-400 text-sm font-light leading-relaxed">Structural dominance benchmark.</p>
+            </div>
+            <div className="bg-white/5 p-10 rounded-[3rem] border border-white/10">
+               <h4 className="text-blue-500 font-black text-4xl mb-4">∞</h4>
+               <p className="text-slate-400 text-sm font-light leading-relaxed">Continuous evolution of trust.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      </main>
+      {/* 5. PHILOSOPHY */}
+      <section className="py-32">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20">
+          <div className="space-y-12">
+            <div>
+              <p className="text-2xl text-slate-300 font-light italic leading-relaxed mb-4">"Excellence is not a singular act, but a habit."</p>
+              <span className="text-cyan-500 font-black text-[10px] uppercase tracking-widest">Aristotle</span>
+            </div>
+            <div>
+              <p className="text-2xl text-slate-300 font-light italic leading-relaxed mb-4">"Modern life is built on the details. We provide architectural precision."</p>
+              <span className="text-blue-500 font-black text-[10px] uppercase tracking-widest">Servecly Core Philosophy</span>
+            </div>
+          </div>
+          <div className="bg-white/[0.02] p-12 rounded-[4rem] border border-white/10 text-center shadow-2xl">
+            <h3 className="text-4xl font-black text-white mb-8 italic">"The Curated Standard"</h3>
+            <div className="flex justify-around">
+              <div><div className="text-5xl font-black text-white">99.8%</div><div className="text-[9px] text-slate-500 uppercase font-black tracking-widest">Satisfaction</div></div>
+              <div className="w-px h-12 bg-white/10" />
+              <div><div className="text-5xl font-black text-white">150k+</div><div className="text-[9px] text-slate-500 uppercase font-black tracking-widest">Tasks</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* FIX 12: footer now always fully visible (no cut off) */}
-      <footer className="py-24 sm:py-32 text-center bg-cyan-500/5">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <p className="text-xl sm:text-4xl text-white italic">
-            "Servecly improves lives..."
+      {/* 6. CEO MESSAGE: Mr. T */}
+      <footer className="py-32 text-center bg-cyan-500/5">
+        <div className="max-w-4xl mx-auto px-6">
+          <p className="text-4xl text-white font-light italic leading-tight mb-16">
+            "Servecly improves lives by anchoring home services in precision. Our hope is to be the best based on our structural integrity and the trust of our community."
           </p>
+          <div className="flex flex-col items-center">
+            <div className="h-20 w-20 bg-slate-800 rounded-full mb-6 border-2 border-cyan-500 flex items-center justify-center font-black text-3xl text-cyan-500 italic">T</div>
+            <span className="text-white font-black uppercase tracking-widest text-sm">Mr. T</span>
+            <span className="text-slate-500 text-[10px] font-bold uppercase mt-2"> CTO, Servecly</span>
+          </div>
         </div>
       </footer>
-
     </div>
   );
 };
