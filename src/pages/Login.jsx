@@ -34,6 +34,7 @@ const handleLogin = async (e) => {
     window.location.href = "/"; 
 
     } else {
+      raise HTTPException(status_code=401);
       setError('Incorrect email or password');    //replaced this : alert(data.error || 'Something went wrong');
     }
   } catch (err) {
