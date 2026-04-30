@@ -102,4 +102,7 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         print(f"Signup Error: {str(e)}")
-        return {"error": "Internal Server Error", "details": str(e)}
+        raise HTTPException(
+        status_code=500, 
+        detail="Internal Server Error"
+    ) #return {"error": "Internal Server Error", "details": str(e)}
