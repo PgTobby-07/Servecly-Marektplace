@@ -38,7 +38,11 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     stored_password = result[3]
 
     if data.password != stored_password:
-        return {"error": "Invalid credentials"}
+        raise HTTPException(
+        status_code=401,
+        detail="Invalid Credentials"
+    )
+        #return {"error": "Invalid credentials"}
 
     access_token = create_access_token(data={"sub": str(result[0])})
 
