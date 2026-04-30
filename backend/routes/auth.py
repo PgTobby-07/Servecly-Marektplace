@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from config.database import get_db
@@ -30,7 +30,10 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     """), {"email": data.email}).fetchone()
 
     if not result:
-        return {"error": "Invalid credentials"}
+        raise HTTPException(status_code=401, 
+            detail="Invalid Credentials",
+            headers={"X-Error": "There was a problem"})
+        #return {"error": "Invalid credentials"}
 
     stored_password = result[3]
 
