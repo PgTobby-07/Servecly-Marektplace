@@ -3,7 +3,7 @@ import MainLayout from '../layouts/MainLayout';
 
 const Payment = () => {
   const [method, setMethod] = useState('card');
- if(!user ||user.role !=='users'){
+ if(!user ||user.role !=='user'){
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-container-low p-6">
         <div className="text-center p-12 bg-white max-w-md rounded-3xl shadow-lg border border-slate-100">
