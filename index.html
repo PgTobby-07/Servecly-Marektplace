@@ -13,5 +13,11 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      navigator.geolocation.getCurrentPosition(
+     position=> console.log(position),
+  error=> console.error(error)
+)
+    </script>
   </body>
 </html>
