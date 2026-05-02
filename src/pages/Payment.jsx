@@ -3,6 +3,8 @@ import MainLayout from '../layouts/MainLayout';
 
 const Payment = () => {
   const [method, setMethod] = useState('card');
+  const [user] = useState(JSON.parse(localStorage.getItem("user")));
+
  if(!user ||user.role !=='user'){
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-container-low p-6">
