@@ -3,7 +3,18 @@ import MainLayout from '../layouts/MainLayout';
 
 const Payment = () => {
   const [method, setMethod] = useState('card');
-
+ if(!user ||user.role!='users'){
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface-container-low p-6">
+        <div className="text-center p-12 bg-white max-w-md rounded-3xl shadow-lg border border-slate-100">
+          <div className="text-6xl mb-6">🚫</div>
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h2>
+          <p className="text-slate-500 mb-8">This area is reserved for the Customer or user.</p>
+          <Link to="/" className="px-8 py-3 bg-primary text-white rounded-xl inline-block font-bold">Go Back Home</Link>
+        </div>
+      </div>
+    );
+ }
   return (
       <div className="max-w-6xl mx-auto px-6 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <h1 className="text-4xl font-display text-on-surface mb-8">Review & Pay</h1>
