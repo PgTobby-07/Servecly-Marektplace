@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MainLayout from '../layouts/MainLayout';
+import { Link } from 'react-router-dom';
 
 const Payment = () => {
   const [method, setMethod] = useState('card');
