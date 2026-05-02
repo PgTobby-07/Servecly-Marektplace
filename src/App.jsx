@@ -52,7 +52,10 @@ function App() {
         />
 
         {/* Auth Pages */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<MainLayout>
+          <Login />
+        </MainLayout>
+        }/>
         <Route path="/signup" element={<SignUp />} />
 
         {/* Other Marketplace Routes */}
